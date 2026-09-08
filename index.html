@@ -34,16 +34,16 @@
 
   <!-- Sidebar Navigation -->
   <div class="sidebar d-none d-md-block">
-    <div class="brand text-center"><i class="fa-solid fa-boxes-stacked me-2 text-primary"></i>Smart ERP System</div>
+    <div class="brand text-center"><i class="fa-solid fa-store me-2 text-primary"></i>Shop Management</div>
     <ul class="nav flex-column mt-3">
       <li class="nav-item">
-        <a class="nav-link active" onclick="switchTab('dashboard-tab', this)"><i class="fa-solid fa-chart-pie me-2"></i> Dashboard & POS</a>
+        <a class="nav-link active" onclick="switchTab('dashboard-tab', this)"><i class="fa-solid fa-cart-shopping me-2"></i> POS & Sales</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" onclick="switchTab('products-tab', this)"><i class="fa-solid fa-box me-2"></i> Products & Inventory</a>
+        <a class="nav-link" onclick="switchTab('products-tab', this)"><i class="fa-solid fa-box me-2"></i> Products Stock</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" onclick="switchTab('reports-tab', this)"><i class="fa-solid fa-users me-2"></i> Customers & Reports</a>
+        <a class="nav-link" onclick="switchTab('reports-tab', this)"><i class="fa-solid fa-users me-2"></i> Customers & History</a>
       </li>
     </ul>
   </div>
@@ -53,15 +53,15 @@
     <!-- Top Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h3 class="fw-bold m-0" id="tabTitle">Dashboard Overview</h3>
-        <small class="text-muted">Real-time inventory and sales management</small>
+        <h3 class="fw-bold m-0" id="tabTitle">Shop POS & Sales Counter</h3>
+        <small class="text-muted">Manage product sales and customer information</small>
       </div>
 
       <!-- Stock Alert Controls -->
       <div class="card p-2 d-flex flex-row align-items-center gap-2 border-0 shadow-sm">
         <div class="form-check form-switch m-0">
           <input class="form-check-input" type="checkbox" id="alertToggle" checked onchange="loadData()">
-          <label class="form-check-label small fw-bold" for="alertToggle">Alert Limit</label>
+          <label class="form-check-label small fw-bold" for="alertToggle">Low Stock Alert</label>
         </div>
         <input type="number" id="alertLimit" class="form-control form-control-sm" value="5" style="width: 65px;" onchange="loadData()">
       </div>
@@ -98,28 +98,61 @@
     <!-- ================= TAB 1: DASHBOARD & POS ================= -->
     <div id="dashboard-tab" class="page-tab active-tab">
       <div class="row g-4">
-        <!-- Quick POS Terminal -->
+        <!-- Shop POS Counter Form -->
         <div class="col-md-5">
           <div class="card card-custom p-4">
-            <h5 class="fw-bold mb-3"><i class="fa-solid fa-cart-shopping text-primary me-2"></i>Quick POS Terminal</h5>
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-cash-register text-primary me-2"></i>Checkout Counter</h5>
             <form id="sellProductForm">
+              
+              <!-- Customer Selection Type -->
               <div class="mb-3">
-                <label class="small fw-bold mb-1">Select Customer</label>
-                <select id="sCustomer" class="form-select">
-                  <option value="Guest">Guest Customer</option>
+                <label class="small fw-bold mb-1">Customer Selection</label>
+                <select id="custType" class="form-select" onchange="toggleCustomerInput()">
+                  <option value="guest">Walk-in Customer (Guest)</option>
+                  <option value="existing">Existing Customer</option>
+                  <option value="new">+ Add New Customer Info</option>
                 </select>
               </div>
+
+              <!-- Existing Customer Dropdown -->
+              <div class="mb-3 d-none" id="existingCustomerBox">
+                <label class="small fw-bold mb-1">Select Customer</label>
+                <select id="sCustomer" class="form-select">
+                  <option value="Guest">Select Customer</option>
+                </select>
+              </div>
+
+              <!-- New Customer Info Fields (With Required Phone & City) -->
+              <div id="newCustomerBox" class="border rounded p-3 mb-3 bg-light d-none">
+                <h6 class="fw-bold text-primary mb-2"><i class="fa-solid fa-user-plus me-1"></i> Required Customer Info</h6>
+                <div class="mb-2">
+                  <input type="text" id="newCustName" class="form-control form-control-sm" placeholder="Customer Name *">
+                </div>
+                <div class="mb-2">
+                  <input type="text" id="newCustPhone" class="form-control form-control-sm" placeholder="Phone Number *">
+                </div>
+                <div class="mb-2">
+                  <input type="text" id="newCustCity" class="form-control form-control-sm" placeholder="City *">
+                </div>
+                <div>
+                  <input type="text" id="newCustAddress" class="form-control form-control-sm" placeholder="Street/Full Address (Optional)">
+                </div>
+              </div>
+
+              <!-- Product Selection -->
               <div class="mb-3">
                 <label class="small fw-bold mb-1">Select Product</label>
                 <select id="sProduct" class="form-select" required>
                   <option value="">Select Product</option>
                 </select>
               </div>
+
               <div class="mb-3">
                 <label class="small fw-bold mb-1">Quantity</label>
                 <input type="number" id="sQuantity" class="form-control" placeholder="1" min="1" required>
               </div>
-              <button type="submit" class="btn btn-primary w-100 fw-bold py-2"><i class="fa-solid fa-check me-2"></i>Complete Sale</button>
+
+              <button type="submit" class="btn btn-primary w-100 fw-bold py-2"><i class="fa-solid fa-receipt me-2"></i>Complete Sale & Print</button>
             </form>
           </div>
         </div>
@@ -201,31 +234,41 @@
     <!-- ================= TAB 3: CUSTOMERS & REPORTS ================= -->
     <div id="reports-tab" class="page-tab">
       <div class="row g-4 mb-4">
-        <!-- Add Customer -->
+        <!-- Add Customer Manual -->
         <div class="col-md-4">
           <div class="card card-custom p-4">
-            <h5 class="fw-bold mb-3"><i class="fa-solid fa-user-plus text-info me-2"></i>Add Customer</h5>
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-user-plus text-info me-2"></i>Add Customer Profile</h5>
             <form id="addCustomerForm">
               <div class="mb-2">
-                <label class="small fw-bold mb-1">Customer Name</label>
+                <label class="small fw-bold mb-1">Customer Name *</label>
                 <input type="text" id="cName" class="form-control" placeholder="Name" required>
               </div>
               <div class="mb-2">
-                <label class="small fw-bold mb-1">Phone Number</label>
-                <input type="text" id="cPhone" class="form-control" placeholder="Phone">
+                <label class="small fw-bold mb-1">Phone Number *</label>
+                <input type="text" id="cPhone" class="form-control" placeholder="Phone" required>
+              </div>
+              <div class="mb-2">
+                <label class="small fw-bold mb-1">City *</label>
+                <input type="text" id="cCity" class="form-control" placeholder="City Name" required>
               </div>
               <div class="mb-3">
-                <label class="small fw-bold mb-1">Address</label>
-                <input type="text" id="cAddress" class="form-control" placeholder="Address">
+                <label class="small fw-bold mb-1">Address (Optional)</label>
+                <input type="text" id="cAddress" class="form-control" placeholder="Street / Detailed Address">
               </div>
-              <button type="submit" class="btn btn-info text-white w-100 fw-bold py-2">Save Customer</button>
+              <button type="submit" class="btn btn-info text-white w-100 fw-bold py-2">Save Customer Profile</button>
             </form>
 
             <hr class="my-4">
 
-            <h6 class="fw-bold mb-2">Customer List</h6>
+            <h6 class="fw-bold mb-2">Registered Customers</h6>
             <div class="table-responsive" style="max-height: 250px;">
               <table class="table table-sm table-hover align-middle">
+                <thead>
+                  <tr class="table-light">
+                    <th>Name</th>
+                    <th>Phone</th>
+                  </tr>
+                </thead>
                 <tbody id="customersTable"></tbody>
               </table>
             </div>
@@ -238,7 +281,7 @@
             <div class="card-header bg-white py-3">
               <div class="row g-2 align-items-center">
                 <div class="col-md-4">
-                  <h5 class="m-0 fw-bold">Sales History Report</h5>
+                  <h5 class="m-0 fw-bold">Sales History</h5>
                 </div>
                 <div class="col-md-8">
                   <div class="d-flex gap-2 justify-content-end">
@@ -258,10 +301,10 @@
                 <thead class="table-light">
                   <tr>
                     <th>TRX ID</th>
-                    <th>Customer</th>
+                    <th>Customer Name</th>
                     <th>Product</th>
                     <th>Qty</th>
-                    <th>Total Price</th>
+                    <th>Total</th>
                     <th>Date & Time</th>
                   </tr>
                 </thead>
@@ -316,6 +359,24 @@
       loadData();
     });
 
+    // Toggle customer fields in POS counter
+    function toggleCustomerInput() {
+      const type = document.getElementById('custType').value;
+      const existingBox = document.getElementById('existingCustomerBox');
+      const newBox = document.getElementById('newCustomerBox');
+
+      if (type === 'existing') {
+        existingBox.classList.remove('d-none');
+        newBox.classList.add('d-none');
+      } else if (type === 'new') {
+        newBox.classList.remove('d-none');
+        existingBox.classList.add('d-none');
+      } else {
+        existingBox.classList.add('d-none');
+        newBox.classList.add('d-none');
+      }
+    }
+
     // Tab Switcher
     function switchTab(tabId, element) {
       document.querySelectorAll('.page-tab').forEach(tab => tab.classList.remove('active-tab'));
@@ -325,8 +386,8 @@
       element.classList.add('active');
 
       const titles = {
-        'dashboard-tab': 'Dashboard Overview',
-        'products-tab': 'Products & Inventory Management',
+        'dashboard-tab': 'Shop POS & Sales Counter',
+        'products-tab': 'Products Stock Management',
         'reports-tab': 'Customer Records & Sales History'
       };
       document.getElementById('tabTitle').innerText = titles[tabId];
@@ -346,7 +407,7 @@
         const alertEnabled = document.getElementById('alertToggle').checked;
         const alertThreshold = parseInt(document.getElementById('alertLimit').value) || 5;
 
-        // Dashboard Stats
+        // Stats calculation
         let totalRev = 0;
         if (Array.isArray(sales)) sales.forEach(s => totalRev += parseFloat(s.total_price || 0));
 
@@ -394,11 +455,11 @@
           });
         }
 
-        // Render Customers
+        // Render Customer List
         const cBody = document.getElementById('customersTable');
         const sCustomer = document.getElementById('sCustomer');
         cBody.innerHTML = '';
-        sCustomer.innerHTML = '<option value="Guest">Guest Customer</option>';
+        sCustomer.innerHTML = '<option value="">Select Customer</option>';
 
         if (Array.isArray(customers)) {
           customers.forEach(c => {
@@ -408,7 +469,7 @@
                 <td class="small text-muted">${c.customer_phone || 'N/A'}</td>
               </tr>
             `;
-            sCustomer.innerHTML += `<option value="${c.customer_name}">${c.customer_name}</option>`;
+            sCustomer.innerHTML += `<option value="${c.customer_name}">${c.customer_name} (${c.customer_phone || 'No Phone'})</option>`;
           });
         }
 
@@ -430,7 +491,7 @@
           const rowHTML = `
             <tr>
               <td class="fw-bold text-primary">#TRX-${s.id}</td>
-              <td>${s.customer_name || 'Guest'}</td>
+              <td>${s.customer_name || 'Walk-in Guest'}</td>
               <td class="fw-semibold">${s.product_name || 'Product'}</td>
               <td>${s.quantity} pcs</td>
               <td class="fw-bold text-success">$${parseFloat(s.total_price).toFixed(2)}</td>
@@ -443,7 +504,7 @@
             recentSalesBody.innerHTML += `
               <tr>
                 <td class="fw-bold text-primary">#TRX-${s.id}</td>
-                <td>${s.customer_name || 'Guest'}</td>
+                <td>${s.customer_name || 'Walk-in Guest'}</td>
                 <td>${s.product_name || 'Product'}</td>
                 <td>${s.quantity}</td>
                 <td class="fw-bold text-success">$${parseFloat(s.total_price).toFixed(2)}</td>
@@ -457,7 +518,72 @@
       }
     }
 
-    // Form Handlers
+    // Handlers
+    document.getElementById('sellProductForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const custType = document.getElementById('custType').value;
+      let finalCustomerName = 'Walk-in Guest';
+
+      // Handle New Customer Entry with Validation
+      if (custType === 'new') {
+        const name = document.getElementById('newCustName').value.trim();
+        const phone = document.getElementById('newCustPhone').value.trim();
+        const city = document.getElementById('newCustCity').value.trim();
+        const streetAddress = document.getElementById('newCustAddress').value.trim();
+
+        if (!name) {
+          alert('Please enter Customer Name');
+          return;
+        }
+        if (!phone) {
+          alert('Phone Number is required!');
+          return;
+        }
+        if (!city) {
+          alert('City Name is required!');
+          return;
+        }
+
+        const fullAddressInfo = streetAddress ? `${city}, ${streetAddress}` : city;
+
+        // Save Customer to DB
+        await fetch(`${API_BASE}/api/customers`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            customer_name: name, 
+            customer_phone: phone, 
+            customer_address: fullAddressInfo 
+          })
+        });
+
+        finalCustomerName = name;
+      } else if (custType === 'existing') {
+        finalCustomerName = document.getElementById('sCustomer').value || 'Walk-in Guest';
+      }
+
+      // Record Sale
+      const res = await fetch(`${API_BASE}/api/sales`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer_name: finalCustomerName,
+          product_id: document.getElementById('sProduct').value,
+          quantity: document.getElementById('sQuantity').value
+        })
+      });
+
+      if(res.ok) {
+        document.getElementById('sellProductForm').reset();
+        toggleCustomerInput();
+        loadData();
+      } else {
+        const err = await res.json();
+        alert(err.error || 'Sale failed');
+      }
+    });
+
     document.getElementById('addProductForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       await fetch(`${API_BASE}/api/products`, {
@@ -475,37 +601,21 @@
 
     document.getElementById('addCustomerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+      const city = document.getElementById('cCity').value.trim();
+      const street = document.getElementById('cAddress').value.trim();
+      const combinedAddr = street ? `${city}, ${street}` : city;
+
       await fetch(`${API_BASE}/api/customers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           customer_name: document.getElementById('cName').value,
           customer_phone: document.getElementById('cPhone').value,
-          customer_address: document.getElementById('cAddress').value
+          customer_address: combinedAddr
         })
       });
       document.getElementById('addCustomerForm').reset();
       loadData();
-    });
-
-    document.getElementById('sellProductForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const res = await fetch(`${API_BASE}/api/sales`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          customer_name: document.getElementById('sCustomer').value,
-          product_id: document.getElementById('sProduct').value,
-          quantity: document.getElementById('sQuantity').value
-        })
-      });
-      if(res.ok) {
-        document.getElementById('sellProductForm').reset();
-        loadData();
-      } else {
-        const err = await res.json();
-        alert(err.error || 'Sale failed');
-      }
     });
 
     async function deleteProduct(id) {
