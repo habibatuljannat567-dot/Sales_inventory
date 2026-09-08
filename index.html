@@ -3,166 +3,434 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simple Live ERP System</title>
+  <title>Smart ERP & Shop Management System</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
-    .card { border-radius: 10px; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-    .nav-pills .nav-link.active { background-color: #0d6efd; }
-    .live-status { width: 8px; height: 8px; background: #198754; border-radius: 50%; display: inline-block; }
+    :root { --sidebar-width: 250px; --header-height: 60px; }
+    body { background-color: #f1f5f9; font-family: 'Segoe UI', Roboto, sans-serif; color: #334155; }
+    
+    .top-header { height: var(--header-height); background: #ffffff; border-bottom: 1px solid #e2e8f0; position: fixed; top: 0; right: 0; left: var(--sidebar-width); z-index: 99; padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+    .sidebar { width: var(--sidebar-width); height: 100vh; position: fixed; top: 0; left: 0; background: #0f172a; color: #fff; z-index: 100; }
+    .sidebar .brand { font-size: 1.2rem; font-weight: 700; padding: 1.25rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .sidebar .nav-link { color: #94a3b8; padding: 0.8rem 1.25rem; font-weight: 500; cursor: pointer; border-radius: 8px; margin: 0.2rem 0.8rem; transition: all 0.2s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: #fff; background: #2563eb; }
+    
+    .main-wrapper { margin-left: var(--sidebar-width); margin-top: var(--header-height); padding: 1.5rem; min-height: calc(100vh - var(--header-height) - 60px); }
+    .card-custom { border: none; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); background: #ffffff; }
+    
+    .page-tab { display: none; }
+    .page-tab.active-tab { display: block; }
+    
+    .hero-banner { background: linear-gradient(135deg, #1e293b, #334155); color: #fff; border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem; }
+
+    .stat-card { border-radius: 10px; padding: 1.25rem; color: #fff; }
+    .stat-card.blue { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+    .stat-card.green { background: linear-gradient(135deg, #10b981, #047857); }
+    .stat-card.cyan { background: linear-gradient(135deg, #06b6d4, #0e7490); }
+    .stat-card.yellow { background: linear-gradient(135deg, #f59e0b, #b45309); }
+
+    .footer { margin-left: var(--sidebar-width); background: #ffffff; border-top: 1px solid #e2e8f0; padding: 1rem 1.5rem; font-size: 0.875rem; color: #64748b; text-align: center; }
+    
+    .live-indicator { width: 10px; height: 10px; background-color: #10b981; border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
   </style>
 </head>
 <body>
 
-  <!-- NAVBAR -->
-  <nav class="navbar navbar-dark bg-dark mb-4">
-    <div class="container">
-      <span class="navbar-brand fw-bold">
-        <i class="fa-solid fa-store me-2"></i> Shop Management
-      </span>
-      <span class="badge bg-light text-dark d-flex align-items-center gap-2">
-        <span class="live-status"></span> Live Sync Active
-      </span>
+  <!-- ================= LEFT SIDEBAR ================= -->
+  <div class="sidebar d-none d-md-block">
+    <div class="brand text-center">
+      <i class="fa-solid fa-store me-2 text-primary"></i>Shop ERP System
     </div>
-  </nav>
-
-  <div class="container">
-    <div class="row g-4">
-      
-      <!-- FORM: INPUT DATA -->
-      <div class="col-md-4">
-        <div class="card p-4">
-          <h5 class="fw-bold mb-3"><i class="fa-solid fa-plus-circle text-primary me-2"></i>Add New Product</h5>
-          <form id="productForm">
-            <div class="mb-3">
-              <label class="form-label small fw-bold">Product Name</label>
-              <input type="text" id="pName" class="form-control" placeholder="e.g. Laptop" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label small fw-bold">Price ($)</label>
-              <input type="number" step="0.01" id="pPrice" class="form-control" placeholder="0.00" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label small fw-bold">Stock Quantity</label>
-              <input type="number" id="pStock" class="form-control" placeholder="0" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100 fw-bold py-2">Save Product</button>
-          </form>
-        </div>
-      </div>
-
-      <!-- TABLE: SHOW & LIVE UPDATE DATA -->
-      <div class="col-md-8">
-        <div class="card p-4">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="fw-bold m-0"><i class="fa-solid fa-boxes-stacked text-success me-2"></i>Product List</h5>
-            <button class="btn btn-sm btn-outline-danger" onclick="clearAllData()">
-              <i class="fa-solid fa-trash me-1"></i> Clear All Data
-            </button>
-          </div>
-
-          <div class="table-responsive">
-            <table class="table table-hover align-middle">
-              <thead class="table-light">
-                <tr>
-                  <th>#</th>
-                  <th>Product Name</th>
-                  <th>Price</th>
-                  <th>Stock</th>
-                  <th class="text-end">Action</th>
-                </tr>
-              </thead>
-              <tbody id="productTable">
-                <!-- Data will appear here automatically -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-    </div>
+    <ul class="nav flex-column mt-3">
+      <li class="nav-item">
+        <a class="nav-link active" onclick="switchTab('dashboard-tab', this)">
+          <i class="fa-solid fa-chart-line me-2"></i> Dashboard
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('products-tab', this)">
+          <i class="fa-solid fa-boxes-stacked me-2"></i> Products
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('customers-tab', this)">
+          <i class="fa-solid fa-address-book me-2"></i> Customer Details
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('transactions-tab', this)">
+          <i class="fa-solid fa-receipt me-2"></i> Transactions
+        </a>
+      </li>
+    </ul>
   </div>
 
+  <!-- ================= TOP HEADER ================= -->
+  <header class="top-header">
+    <div class="d-flex align-items-center gap-3">
+      <h5 class="m-0 fw-bold text-dark" id="headerTitle">Dashboard Overview</h5>
+      <span class="badge bg-light text-dark border d-flex align-items-center gap-2 px-2 py-1">
+        <span class="live-indicator"></span> Live Storage Active
+      </span>
+    </div>
+  </header>
+
+  <!-- ================= MAIN WRAPPER ================= -->
+  <div class="main-wrapper">
+
+    <!-- HERO BANNER -->
+    <div class="hero-banner shadow-sm">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h3 class="fw-bold m-0 mb-2">Welcome Back, Shop Manager! 👋</h3>
+          <p class="m-0 text-white-50">Add products, customers & transactions to see immediate live updates on dashboard.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS OVERVIEW CARDS -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-3">
+        <div class="stat-card blue shadow-sm">
+          <small class="text-white-50 fw-bold">TOTAL REVENUE</small>
+          <h3 class="fw-bold m-0 mt-1" id="statRevenue">$0.00</h3>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card green shadow-sm">
+          <small class="text-white-50 fw-bold">TOTAL PRODUCTS</small>
+          <h3 class="fw-bold m-0 mt-1" id="statProducts">0</h3>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card cyan shadow-sm">
+          <small class="text-white-50 fw-bold">REGISTERED CUSTOMERS</small>
+          <h3 class="fw-bold m-0 mt-1" id="statCustomers">0</h3>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card yellow shadow-sm">
+          <small class="text-white-50 fw-bold">TRANSACTIONS</small>
+          <h3 class="fw-bold m-0 mt-1" id="statTransactions">0</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= TABS CONTENT ================= -->
+
+    <!-- PAGE 1: DASHBOARD -->
+    <div id="dashboard-tab" class="page-tab active-tab">
+      <div class="card card-custom p-4">
+        <h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-line text-primary me-2"></i>Quick Overview</h5>
+        <p class="text-muted">Navigation menu options on the left allow you to enter and manage real-time store data.</p>
+      </div>
+    </div>
+
+    <!-- PAGE 2: PRODUCTS -->
+    <div id="products-tab" class="page-tab">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card card-custom p-4">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-plus-circle text-success me-2"></i>Add New Product</h5>
+            <form id="addProductForm">
+              <div class="mb-2">
+                <label class="small fw-bold mb-1">Product Name *</label>
+                <input type="text" id="pName" class="form-control" placeholder="Item Name" required>
+              </div>
+              <div class="mb-2">
+                <label class="small fw-bold mb-1">Price ($) *</label>
+                <input type="number" step="0.01" id="pPrice" class="form-control" placeholder="0.00" required>
+              </div>
+              <div class="mb-3">
+                <label class="small fw-bold mb-1">Initial Stock Quantity *</label>
+                <input type="number" id="pStock" class="form-control" placeholder="0" required>
+              </div>
+              <button type="submit" class="btn btn-success w-100 fw-bold py-2">Save Product</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="col-md-8">
+          <div class="card card-custom">
+            <div class="card-header bg-white py-3">
+              <h5 class="m-0 fw-bold">Inventory Products List</h5>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>#</th>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th class="text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="inventoryTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 3: CUSTOMERS -->
+    <div id="customers-tab" class="page-tab">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card card-custom p-4">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-user-plus text-info me-2"></i>Add Customer Profile</h5>
+            <form id="addCustomerForm">
+              <div class="mb-2">
+                <label class="small fw-bold mb-1">Customer Name *</label>
+                <input type="text" id="cName" class="form-control" placeholder="Name" required>
+              </div>
+              <div class="mb-2">
+                <label class="small fw-bold mb-1">Phone Number *</label>
+                <input type="text" id="cPhone" class="form-control" placeholder="017xxxxxxxx" required>
+              </div>
+              <div class="mb-3">
+                <label class="small fw-bold mb-1">City / Address *</label>
+                <input type="text" id="cAddress" class="form-control" placeholder="Address" required>
+              </div>
+              <button type="submit" class="btn btn-info text-white w-100 fw-bold py-2">Save Profile</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="col-md-8">
+          <div class="card card-custom">
+            <div class="card-header bg-white py-3">
+              <h5 class="m-0 fw-bold">Registered Customer List</h5>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>#</th>
+                    <th>Customer Name</th>
+                    <th>Phone</th>
+                    <th>Location</th>
+                    <th class="text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="customersTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 4: TRANSACTIONS -->
+    <div id="transactions-tab" class="page-tab">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card card-custom p-4">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-cart-plus text-primary me-2"></i>New Sale Transaction</h5>
+            <form id="addSaleForm">
+              <div class="mb-2">
+                <label class="small fw-bold mb-1">Customer Name *</label>
+                <input type="text" id="sCustomer" class="form-control" placeholder="Customer Name" required>
+              </div>
+              <div class="mb-2">
+                <label class="small fw-bold mb-1">Product Name *</label>
+                <input type="text" id="sProduct" class="form-control" placeholder="Product Name" required>
+              </div>
+              <div class="mb-3">
+                <label class="small fw-bold mb-1">Total Amount ($) *</label>
+                <input type="number" step="0.01" id="sAmount" class="form-control" placeholder="0.00" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-100 fw-bold py-2">Record Sale</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="col-md-8">
+          <div class="card card-custom">
+            <div class="card-header bg-white py-3">
+              <h5 class="m-0 fw-bold">Transaction History</h5>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>TRX ID</th>
+                    <th>Customer</th>
+                    <th>Product</th>
+                    <th>Amount</th>
+                    <th class="text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="salesTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <p class="m-0">&copy; 2026 Shop ERP System | Live Data Manager</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // 1. Get products from LocalStorage
-    function getProducts() {
-      return JSON.parse(localStorage.getItem('products_data')) || [];
+    // Initializing Data from Local Storage
+    let products = JSON.parse(localStorage.getItem('erp_products')) || [];
+    let customers = JSON.parse(localStorage.getItem('erp_customers')) || [];
+    let sales = JSON.parse(localStorage.getItem('erp_sales')) || [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderAll();
+    });
+
+    function switchTab(tabId, element) {
+      document.querySelectorAll('.page-tab').forEach(tab => tab.classList.remove('active-tab'));
+      document.querySelectorAll('.sidebar .nav-link').forEach(link => link.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active-tab');
+      element.classList.add('active');
     }
 
-    // 2. Save products to LocalStorage
-    function saveProducts(products) {
-      localStorage.setItem('products_data', JSON.stringify(products));
-      renderTable(); // Instant local refresh
-    }
+    function renderAll() {
+      // 1. Stats calculation
+      let totalRev = sales.reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0);
+      document.getElementById('statRevenue').innerText = `$${totalRev.toFixed(2)}`;
+      document.getElementById('statProducts').innerText = products.length;
+      document.getElementById('statCustomers').innerText = customers.length;
+      document.getElementById('statTransactions').innerText = sales.length;
 
-    // 3. Render Data to HTML Table
-    function renderTable() {
-      const products = getProducts();
-      const tbody = document.getElementById('productTable');
-      tbody.innerHTML = '';
-
-      if (products.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-3">No data available. Add a product from the left form!</td></tr>`;
-        return;
+      // 2. Render Products Table
+      const pTable = document.getElementById('inventoryTable');
+      pTable.innerHTML = '';
+      if(products.length === 0) {
+        pTable.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-3">No products added yet.</td></tr>`;
+      } else {
+        products.forEach((p, index) => {
+          pTable.innerHTML += `
+            <tr>
+              <td>#${index + 1}</td>
+              <td class="fw-bold">${p.name}</td>
+              <td>$${parseFloat(p.price).toFixed(2)}</td>
+              <td><span class="badge bg-success">${p.stock} Units</span></td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(${index})"><i class="fa-solid fa-trash"></i> Delete</button>
+              </td>
+            </tr>
+          `;
+        });
       }
 
-      products.forEach((p, index) => {
-        tbody.innerHTML += `
-          <tr>
-            <td>${index + 1}</td>
-            <td class="fw-bold">${p.name}</td>
-            <td>$${parseFloat(p.price).toFixed(2)}</td>
-            <td><span class="badge bg-success">${p.stock} Units</span></td>
-            <td class="text-end">
-              <button class="btn btn-sm btn-danger" onclick="deleteProduct(${index})">
-                <i class="fa-solid fa-trash"></i> Delete
-              </button>
-            </td>
-          </tr>
-        `;
-      });
+      // 3. Render Customers Table
+      const cTable = document.getElementById('customersTable');
+      cTable.innerHTML = '';
+      if(customers.length === 0) {
+        cTable.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-3">No customers added yet.</td></tr>`;
+      } else {
+        customers.forEach((c, index) => {
+          cTable.innerHTML += `
+            <tr>
+              <td>#${index + 1}</td>
+              <td class="fw-bold">${c.name}</td>
+              <td>${c.phone}</td>
+              <td>${c.address}</td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteCustomer(${index})"><i class="fa-solid fa-trash"></i> Delete</button>
+              </td>
+            </tr>
+          `;
+        });
+      }
+
+      // 4. Render Sales Table
+      const sTable = document.getElementById('salesTable');
+      sTable.innerHTML = '';
+      if(sales.length === 0) {
+        sTable.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-3">No transaction history found.</td></tr>`;
+      } else {
+        sales.forEach((s, index) => {
+          sTable.innerHTML += `
+            <tr>
+              <td class="fw-bold text-primary">#TRX-${index + 101}</td>
+              <td>${s.customer}</td>
+              <td class="fw-semibold">${s.product}</td>
+              <td class="fw-bold text-success">$${parseFloat(s.amount).toFixed(2)}</td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteSale(${index})"><i class="fa-solid fa-trash"></i> Delete</button>
+              </td>
+            </tr>
+          `;
+        });
+      }
     }
 
-    // 4. Form Submit Handler (Add Product)
-    document.getElementById('productForm').addEventListener('submit', (e) => {
+    // Handlers
+    document.getElementById('addProductForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      
-      const newProduct = {
+      products.push({
         name: document.getElementById('pName').value,
         price: document.getElementById('pPrice').value,
         stock: document.getElementById('pStock').value
-      };
-
-      const products = getProducts();
-      products.push(newProduct);
-      saveProducts(products);
-
-      document.getElementById('productForm').reset();
+      });
+      localStorage.setItem('erp_products', JSON.stringify(products));
+      document.getElementById('addProductForm').reset();
+      renderAll();
     });
 
-    // 5. Delete Item
+    document.getElementById('addCustomerForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      customers.push({
+        name: document.getElementById('cName').value,
+        phone: document.getElementById('cPhone').value,
+        address: document.getElementById('cAddress').value
+      });
+      localStorage.setItem('erp_customers', JSON.stringify(customers));
+      document.getElementById('addCustomerForm').reset();
+      renderAll();
+    });
+
+    document.getElementById('addSaleForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      sales.push({
+        customer: document.getElementById('sCustomer').value,
+        product: document.getElementById('sProduct').value,
+        amount: document.getElementById('sAmount').value
+      });
+      localStorage.setItem('erp_sales', JSON.stringify(sales));
+      document.getElementById('addSaleForm').reset();
+      renderAll();
+    });
+
     function deleteProduct(index) {
-      const products = getProducts();
       products.splice(index, 1);
-      saveProducts(products);
+      localStorage.setItem('erp_products', JSON.stringify(products));
+      renderAll();
     }
 
-    // 6. Clear All Data
-    function clearAllData() {
-      if (confirm('Are you sure you want to delete all saved data?')) {
-        localStorage.removeItem('products_data');
-        renderTable();
-      }
+    function deleteCustomer(index) {
+      customers.splice(index, 1);
+      localStorage.setItem('erp_customers', JSON.stringify(customers));
+      renderAll();
     }
 
-    // 7. REAL LIVE UPDATE LISTENER (Auto-updates when data changes across tabs)
+    function deleteSale(index) {
+      sales.splice(index, 1);
+      localStorage.setItem('erp_sales', JSON.stringify(sales));
+      renderAll();
+    }
+
+    // Real-time synchronization across browser tabs
     window.addEventListener('storage', () => {
-      renderTable();
+      products = JSON.parse(localStorage.getItem('erp_products')) || [];
+      customers = JSON.parse(localStorage.getItem('erp_customers')) || [];
+      sales = JSON.parse(localStorage.getItem('erp_sales')) || [];
+      renderAll();
     });
-
-    // Initial Load when opening page
-    renderTable();
   </script>
 </body>
 </html>
