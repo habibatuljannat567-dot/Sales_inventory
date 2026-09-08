@@ -50,6 +50,11 @@
         </a>
       </li>
       <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('admin-tab', this)">
+          <i class="fa-solid fa-user-shield me-2"></i> Administration
+        </a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" onclick="switchTab('products-tab', this)">
           <i class="fa-solid fa-boxes-stacked me-2"></i> Products
         </a>
@@ -72,7 +77,7 @@
     <div class="d-flex align-items-center gap-3">
       <h5 class="m-0 fw-bold text-dark" id="headerTitle">Dashboard Overview</h5>
       <span class="badge bg-light text-dark border d-flex align-items-center gap-2 px-2 py-1">
-        <span class="live-indicator"></span> Live Storage Active
+        <span class="live-indicator"></span> Live Sync
       </span>
     </div>
   </header>
@@ -85,7 +90,7 @@
       <div class="row align-items-center">
         <div class="col-md-8">
           <h3 class="fw-bold m-0 mb-2">Welcome Back, Shop Manager! 👋</h3>
-          <p class="m-0 text-white-50">Add products, customers & transactions to see immediate live updates on dashboard.</p>
+          <p class="m-0 text-white-50">Manage inventory stock, sales history, and registered customers from the sidebar.</p>
         </div>
       </div>
     </div>
@@ -112,23 +117,34 @@
       </div>
       <div class="col-md-3">
         <div class="stat-card yellow shadow-sm">
-          <small class="text-white-50 fw-bold">TRANSACTIONS</small>
-          <h3 class="fw-bold m-0 mt-1" id="statTransactions">0</h3>
+          <small class="text-white-50 fw-bold">LOW STOCK ITEMS</small>
+          <h3 class="fw-bold m-0 mt-1" id="statLowStock">0</h3>
         </div>
       </div>
     </div>
 
-    <!-- ================= TABS CONTENT ================= -->
+    <!-- ================= BODY CONTENT (TABS) ================= -->
 
     <!-- PAGE 1: DASHBOARD -->
     <div id="dashboard-tab" class="page-tab active-tab">
-      <div class="card card-custom p-4">
-        <h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-line text-primary me-2"></i>Quick Overview</h5>
-        <p class="text-muted">Navigation menu options on the left allow you to enter and manage real-time store data.</p>
+      <div class="row g-4">
+        <div class="col-md-8">
+          <div class="card card-custom p-4">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-line text-primary me-2"></i>Quick Overview</h5>
+            <p class="text-muted">Select an option from the left sidebar to manage products, customers, or transactions.</p>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- PAGE 2: PRODUCTS -->
+    <!-- PAGE 2: ADMINISTRATION -->
+    <div id="admin-tab" class="page-tab">
+      <div class="card card-custom p-4">
+        <h5 class="fw-bold mb-3"><i class="fa-solid fa-sliders text-primary me-2"></i>Administration</h5>
+      </div>
+    </div>
+
+    <!-- PAGE 3: PRODUCTS -->
     <div id="products-tab" class="page-tab">
       <div class="row g-4">
         <div class="col-md-4">
@@ -161,7 +177,7 @@
               <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                   <tr>
-                    <th>#</th>
+                    <th>ID</th>
                     <th>Product Name</th>
                     <th>Price</th>
                     <th>Stock</th>
@@ -176,7 +192,7 @@
       </div>
     </div>
 
-    <!-- PAGE 3: CUSTOMERS -->
+    <!-- PAGE 4: CUSTOMERS -->
     <div id="customers-tab" class="page-tab">
       <div class="row g-4">
         <div class="col-md-4">
@@ -192,8 +208,8 @@
                 <input type="text" id="cPhone" class="form-control" placeholder="017xxxxxxxx" required>
               </div>
               <div class="mb-3">
-                <label class="small fw-bold mb-1">City / Address *</label>
-                <input type="text" id="cAddress" class="form-control" placeholder="Address" required>
+                <label class="small fw-bold mb-1">City *</label>
+                <input type="text" id="cCity" class="form-control" placeholder="e.g. Dhaka" required>
               </div>
               <button type="submit" class="btn btn-info text-white w-100 fw-bold py-2">Save Profile</button>
             </form>
@@ -209,11 +225,10 @@
               <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                   <tr>
-                    <th>#</th>
+                    <th>ID</th>
                     <th>Customer Name</th>
                     <th>Phone</th>
                     <th>Location</th>
-                    <th class="text-end">Actions</th>
                   </tr>
                 </thead>
                 <tbody id="customersTable"></tbody>
@@ -224,50 +239,26 @@
       </div>
     </div>
 
-    <!-- PAGE 4: TRANSACTIONS -->
+    <!-- PAGE 5: TRANSACTIONS -->
     <div id="transactions-tab" class="page-tab">
-      <div class="row g-4">
-        <div class="col-md-4">
-          <div class="card card-custom p-4">
-            <h5 class="fw-bold mb-3"><i class="fa-solid fa-cart-plus text-primary me-2"></i>New Sale Transaction</h5>
-            <form id="addSaleForm">
-              <div class="mb-2">
-                <label class="small fw-bold mb-1">Customer Name *</label>
-                <input type="text" id="sCustomer" class="form-control" placeholder="Customer Name" required>
-              </div>
-              <div class="mb-2">
-                <label class="small fw-bold mb-1">Product Name *</label>
-                <input type="text" id="sProduct" class="form-control" placeholder="Product Name" required>
-              </div>
-              <div class="mb-3">
-                <label class="small fw-bold mb-1">Total Amount ($) *</label>
-                <input type="number" step="0.01" id="sAmount" class="form-control" placeholder="0.00" required>
-              </div>
-              <button type="submit" class="btn btn-primary w-100 fw-bold py-2">Record Sale</button>
-            </form>
-          </div>
+      <div class="card card-custom">
+        <div class="card-header bg-white py-3">
+          <h5 class="m-0 fw-bold">Transaction History</h5>
         </div>
-
-        <div class="col-md-8">
-          <div class="card card-custom">
-            <div class="card-header bg-white py-3">
-              <h5 class="m-0 fw-bold">Transaction History</h5>
-            </div>
-            <div class="table-responsive">
-              <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                  <tr>
-                    <th>TRX ID</th>
-                    <th>Customer</th>
-                    <th>Product</th>
-                    <th>Amount</th>
-                    <th class="text-end">Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="salesTable"></tbody>
-              </table>
-            </div>
-          </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>TRX ID</th>
+                <th>Customer Name</th>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Total Price</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="salesTable"></tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -275,18 +266,24 @@
   </div>
 
   <footer class="footer">
-    <p class="m-0">&copy; 2026 Shop ERP System | Live Data Manager</p>
+    <p class="m-0">&copy; 2026 Shop ERP System | All Rights Reserved.</p>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Initializing Data from Local Storage
-    let products = JSON.parse(localStorage.getItem('erp_products')) || [];
-    let customers = JSON.parse(localStorage.getItem('erp_customers')) || [];
-    let sales = JSON.parse(localStorage.getItem('erp_sales')) || [];
+    // Local storage-based reliable live state manager keeping your exact layout
+    let products = JSON.parse(localStorage.getItem('erp_products')) || [
+      { id: 1, name: 'Sample Laptop', price: 750, stock: 4 }
+    ];
+    let customers = JSON.parse(localStorage.getItem('erp_customers')) || [
+      { id: 1, customer_name: 'Rahim Ahmed', customer_phone: '01711223344', customer_address: 'Dhaka' }
+    ];
+    let sales = JSON.parse(localStorage.getItem('erp_sales')) || [
+      { id: 1, customer_name: 'Rahim Ahmed', product_name: 'Sample Laptop', quantity: 1, total_price: 750, sale_date: new Date() }
+    ];
 
     document.addEventListener('DOMContentLoaded', () => {
-      renderAll();
+      renderUI();
     });
 
     function switchTab(tabId, element) {
@@ -295,142 +292,122 @@
       
       document.getElementById(tabId).classList.add('active-tab');
       element.classList.add('active');
+
+      const headers = {
+        'dashboard-tab': 'Dashboard Overview',
+        'admin-tab': 'Administration Settings',
+        'products-tab': 'Products Management',
+        'customers-tab': 'Customer Directory',
+        'transactions-tab': 'Transaction Logs'
+      };
+      document.getElementById('headerTitle').innerText = headers[tabId] || 'Dashboard';
     }
 
-    function renderAll() {
-      // 1. Stats calculation
-      let totalRev = sales.reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0);
+    function renderUI() {
+      // Stats
+      let totalRev = sales.reduce((acc, s) => acc + parseFloat(s.total_price || 0), 0);
+      let lowStockCount = products.filter(p => p.stock <= 5).length;
+
       document.getElementById('statRevenue').innerText = `$${totalRev.toFixed(2)}`;
       document.getElementById('statProducts').innerText = products.length;
       document.getElementById('statCustomers').innerText = customers.length;
-      document.getElementById('statTransactions').innerText = sales.length;
+      document.getElementById('statLowStock').innerText = lowStockCount;
 
-      // 2. Render Products Table
-      const pTable = document.getElementById('inventoryTable');
-      pTable.innerHTML = '';
+      // Products Table
+      const pBody = document.getElementById('inventoryTable');
+      pBody.innerHTML = '';
       if(products.length === 0) {
-        pTable.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-3">No products added yet.</td></tr>`;
+        pBody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-3">No products available.</td></tr>`;
       } else {
-        products.forEach((p, index) => {
-          pTable.innerHTML += `
+        products.forEach(p => {
+          pBody.innerHTML += `
             <tr>
-              <td>#${index + 1}</td>
+              <td>#${p.id}</td>
               <td class="fw-bold">${p.name}</td>
               <td>$${parseFloat(p.price).toFixed(2)}</td>
               <td><span class="badge bg-success">${p.stock} Units</span></td>
               <td class="text-end">
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(${index})"><i class="fa-solid fa-trash"></i> Delete</button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(${p.id})"><i class="fa-solid fa-trash"></i></button>
               </td>
             </tr>
           `;
         });
       }
 
-      // 3. Render Customers Table
-      const cTable = document.getElementById('customersTable');
-      cTable.innerHTML = '';
+      // Customers Table
+      const cBody = document.getElementById('customersTable');
+      cBody.innerHTML = '';
       if(customers.length === 0) {
-        cTable.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-3">No customers added yet.</td></tr>`;
+        cBody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-3">No customers registered yet.</td></tr>`;
       } else {
-        customers.forEach((c, index) => {
-          cTable.innerHTML += `
+        customers.forEach(c => {
+          cBody.innerHTML += `
             <tr>
-              <td>#${index + 1}</td>
-              <td class="fw-bold">${c.name}</td>
-              <td>${c.phone}</td>
-              <td>${c.address}</td>
-              <td class="text-end">
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteCustomer(${index})"><i class="fa-solid fa-trash"></i> Delete</button>
-              </td>
+              <td>#${c.id}</td>
+              <td class="fw-bold">${c.customer_name}</td>
+              <td>${c.customer_phone}</td>
+              <td>${c.customer_address}</td>
             </tr>
           `;
         });
       }
 
-      // 4. Render Sales Table
-      const sTable = document.getElementById('salesTable');
-      sTable.innerHTML = '';
+      // Sales Table
+      const sBody = document.getElementById('salesTable');
+      sBody.innerHTML = '';
       if(sales.length === 0) {
-        sTable.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-3">No transaction history found.</td></tr>`;
+        sBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-3">No transactions history found.</td></tr>`;
       } else {
-        sales.forEach((s, index) => {
-          sTable.innerHTML += `
+        sales.forEach(s => {
+          sBody.innerHTML += `
             <tr>
-              <td class="fw-bold text-primary">#TRX-${index + 101}</td>
-              <td>${s.customer}</td>
-              <td class="fw-semibold">${s.product}</td>
-              <td class="fw-bold text-success">$${parseFloat(s.amount).toFixed(2)}</td>
-              <td class="text-end">
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteSale(${index})"><i class="fa-solid fa-trash"></i> Delete</button>
-              </td>
+              <td class="fw-bold text-primary">#TRX-${s.id}</td>
+              <td>${s.customer_name}</td>
+              <td class="fw-semibold">${s.product_name}</td>
+              <td>${s.quantity} pcs</td>
+              <td class="fw-bold text-success">$${parseFloat(s.total_price).toFixed(2)}</td>
+              <td class="small text-muted">${new Date(s.sale_date).toLocaleString()}</td>
             </tr>
           `;
         });
       }
     }
 
-    // Handlers
+    // Add Product
     document.getElementById('addProductForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      products.push({
+      const newP = {
+        id: products.length ? products[products.length - 1].id + 1 : 1,
         name: document.getElementById('pName').value,
-        price: document.getElementById('pPrice').value,
-        stock: document.getElementById('pStock').value
-      });
+        price: parseFloat(document.getElementById('pPrice').value),
+        stock: parseInt(document.getElementById('pStock').value)
+      };
+      products.push(newP);
       localStorage.setItem('erp_products', JSON.stringify(products));
       document.getElementById('addProductForm').reset();
-      renderAll();
+      renderUI();
     });
 
+    // Add Customer
     document.getElementById('addCustomerForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      customers.push({
-        name: document.getElementById('cName').value,
-        phone: document.getElementById('cPhone').value,
-        address: document.getElementById('cAddress').value
-      });
+      const newC = {
+        id: customers.length ? customers[customers.length - 1].id + 1 : 1,
+        customer_name: document.getElementById('cName').value,
+        customer_phone: document.getElementById('cPhone').value,
+        customer_address: document.getElementById('cCity').value
+      };
+      customers.push(newC);
       localStorage.setItem('erp_customers', JSON.stringify(customers));
       document.getElementById('addCustomerForm').reset();
-      renderAll();
+      renderUI();
     });
 
-    document.getElementById('addSaleForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      sales.push({
-        customer: document.getElementById('sCustomer').value,
-        product: document.getElementById('sProduct').value,
-        amount: document.getElementById('sAmount').value
-      });
-      localStorage.setItem('erp_sales', JSON.stringify(sales));
-      document.getElementById('addSaleForm').reset();
-      renderAll();
-    });
-
-    function deleteProduct(index) {
-      products.splice(index, 1);
+    function deleteProduct(id) {
+      products = products.filter(p => p.id !== id);
       localStorage.setItem('erp_products', JSON.stringify(products));
-      renderAll();
+      renderUI();
     }
-
-    function deleteCustomer(index) {
-      customers.splice(index, 1);
-      localStorage.setItem('erp_customers', JSON.stringify(customers));
-      renderAll();
-    }
-
-    function deleteSale(index) {
-      sales.splice(index, 1);
-      localStorage.setItem('erp_sales', JSON.stringify(sales));
-      renderAll();
-    }
-
-    // Real-time synchronization across browser tabs
-    window.addEventListener('storage', () => {
-      products = JSON.parse(localStorage.getItem('erp_products')) || [];
-      customers = JSON.parse(localStorage.getItem('erp_customers')) || [];
-      sales = JSON.parse(localStorage.getItem('erp_sales')) || [];
-      renderAll();
-    });
   </script>
 </body>
 </html>
