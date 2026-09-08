@@ -3,404 +3,188 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart ERP System</title>
+  <title>Smart ERP & Inventory System</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-
-    :root {
-      --bg-dark: #0f1319;
-      --card-bg: #171d26;
-      --card-border: #232b38;
-      --accent-red: #e53e3e;
-      --text-main: #edf2f7;
-      --text-muted: #718096;
-    }
-
-    body {
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      letter-spacing: -0.2px;
-    }
-
-    /* Top Navigation Header */
-    .app-header {
-      height: 65px;
-      background: var(--card-bg);
-      border-bottom: 1px solid var(--card-border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 2rem;
-      position: fixed;
-      top: 0;
-      width: 100%;
-      z-index: 1000;
-    }
-
-    .brand-title {
-      font-weight: 800;
-      font-size: 1.3rem;
-      color: var(--accent-red);
-      letter-spacing: 1px;
-    }
-
-    /* Sidebar Navigation */
-    .app-sidebar {
-      width: 250px;
-      height: calc(100vh - 65px);
-      position: fixed;
-      top: 65px;
-      left: 0;
-      background: var(--card-bg);
-      border-right: 1px solid var(--card-border);
-      padding: 1.5rem 0.8rem;
-    }
-
-    .user-card {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 0.8rem 1rem;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--card-border);
-      border-radius: 10px;
-      margin-bottom: 1.5rem;
-    }
-
-    .user-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, #e53e3e, #9b2c2c);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .menu-link {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.8rem 1rem;
-      color: var(--text-muted);
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.92rem;
-      margin-bottom: 0.3rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .menu-link:hover, .menu-link.active {
-      background: rgba(229, 62, 62, 0.1);
-      color: var(--accent-red);
-    }
-
-    .menu-link.active i {
-      color: var(--accent-red);
-    }
-
-    .sub-menu {
-      display: none;
-      padding-left: 1rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .sub-menu.show {
-      display: block;
-    }
-
-    .sub-menu a {
-      display: block;
-      padding: 0.6rem 1rem;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    .sub-menu a:hover {
-      color: var(--text-main);
-    }
-
-    /* Main Container */
-    .app-main {
-      margin-left: 250px;
-      margin-top: 65px;
-      padding: 2rem;
-    }
-
-    /* Stat Cards */
-    .stat-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 1.4rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .stat-card .stat-icon {
-      width: 50px;
-      height: 50px;
-      border-radius: 10px;
-      background: rgba(229, 62, 62, 0.12);
-      color: var(--accent-red);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-    }
-
-    /* Clean Card Layout */
-    .panel-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-    }
-
-    .panel-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      margin-bottom: 1.25rem;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    /* Form Controls */
-    .form-control, .form-select {
-      background-color: #0f1319 !important;
-      border: 1px solid var(--card-border) !important;
-      color: var(--text-main) !important;
-      border-radius: 8px !important;
-      padding: 0.6rem 0.9rem !important;
-      font-size: 0.9rem !important;
-    }
-
-    .form-control:focus, .form-select:focus {
-      border-color: var(--accent-red) !important;
-      box-shadow: 0 0 0 2px rgba(229, 62, 62, 0.2) !important;
-    }
-
-    .btn-red {
-      background: var(--accent-red);
-      color: #fff;
-      border: none;
-      font-weight: 600;
-      border-radius: 8px;
-      padding: 0.65rem 1.2rem;
-      transition: opacity 0.2s;
-    }
-
-    .btn-red:hover {
-      opacity: 0.9;
-      color: #fff;
-    }
-
-    /* Clean Table Styling */
-    .table-clean {
-      width: 100%;
-      color: var(--text-main);
-      margin: 0;
-    }
-
-    .table-clean th {
-      background: #0f1319;
-      color: var(--text-muted);
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      padding: 0.9rem 1rem;
-      border-bottom: 1px solid var(--card-border);
-    }
-
-    .table-clean td {
-      padding: 1rem;
-      border-bottom: 1px solid var(--card-border);
-      vertical-align: middle;
-      font-size: 0.9rem;
-    }
-
-    .table-clean tbody tr:hover {
-      background-color: rgba(255, 255, 255, 0.02);
-    }
-
-    .tab-pane-custom {
-      display: none;
-    }
-
-    .tab-pane-custom.active {
-      display: block;
-    }
+    :root { --sidebar-width: 250px; }
+    body { background-color: #f8fafc; font-family: 'Segoe UI', Tahoma, sans-serif; color: #334155; }
+    
+    /* Sidebar Layout */
+    .sidebar { width: var(--sidebar-width); height: 100vh; position: fixed; top: 0; left: 0; background: #0f172a; color: #fff; z-index: 100; }
+    .sidebar .brand { font-size: 1.2rem; font-weight: 700; padding: 1.5rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .sidebar .nav-link { color: #94a3b8; padding: 0.9rem 1.25rem; font-weight: 500; cursor: pointer; border-radius: 8px; margin: 0.2rem 0.8rem; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: #fff; background: #2563eb; }
+    
+    /* Main Content */
+    .main-content { margin-left: var(--sidebar-width); padding: 2rem; }
+    .card-custom { border: none; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); background: #ffffff; }
+    .page-tab { display: none; }
+    .page-tab.active-tab { display: block; }
+    
+    /* Stats Cards */
+    .stat-card { border-radius: 12px; padding: 1.25rem; color: #fff; }
+    .stat-card.blue { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+    .stat-card.green { background: linear-gradient(135deg, #10b981, #047857); }
+    .stat-card.cyan { background: linear-gradient(135deg, #06b6d4, #0e7490); }
+    .stat-card.yellow { background: linear-gradient(135deg, #f59e0b, #b45309); }
   </style>
 </head>
 <body>
 
-  <!-- Top Navbar Header -->
-  <div class="app-header">
-    <div class="brand-title"><i class="fa-solid fa-square-poll-vertical me-2"></i>RESTURANT & ERP</div>
-    <div class="d-flex align-items-center gap-3">
-      <div class="d-flex align-items-center gap-2 me-3">
-        <span class="small text-muted fw-semibold">Alert Limit:</span>
+  <!-- Sidebar Navigation -->
+  <div class="sidebar d-none d-md-block">
+    <div class="brand text-center"><i class="fa-solid fa-boxes-stacked me-2 text-primary"></i>Smart ERP System</div>
+    <ul class="nav flex-column mt-3">
+      <li class="nav-item">
+        <a class="nav-link active" onclick="switchTab('dashboard-tab', this)"><i class="fa-solid fa-chart-pie me-2"></i> Dashboard & POS</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('products-tab', this)"><i class="fa-solid fa-box me-2"></i> Products & Inventory</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('reports-tab', this)"><i class="fa-solid fa-users me-2"></i> Customers & Reports</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    
+    <!-- Top Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h3 class="fw-bold m-0" id="tabTitle">Dashboard Overview</h3>
+        <small class="text-muted">Real-time inventory and sales management</small>
+      </div>
+
+      <!-- Stock Alert Controls -->
+      <div class="card p-2 d-flex flex-row align-items-center gap-2 border-0 shadow-sm">
+        <div class="form-check form-switch m-0">
+          <input class="form-check-input" type="checkbox" id="alertToggle" checked onchange="loadData()">
+          <label class="form-check-label small fw-bold" for="alertToggle">Alert Limit</label>
+        </div>
         <input type="number" id="alertLimit" class="form-control form-control-sm" value="5" style="width: 65px;" onchange="loadData()">
       </div>
-      <div class="user-avatar">A</div>
-      <span class="small fw-bold">Admin Panel</span>
-    </div>
-  </div>
-
-  <!-- Sidebar Menu -->
-  <div class="app-sidebar">
-    <div class="user-card">
-      <div class="user-avatar">A</div>
-      <div>
-        <div class="fw-bold small text-white">Ahmed</div>
-        <div class="text-muted small" style="font-size: 0.75rem;">Administrator</div>
-      </div>
     </div>
 
-    <a class="menu-link active" onclick="switchSection('dashboard', this)">
-      <span><i class="fa-solid fa-chart-pie me-3"></i>Dashboard</span>
-    </a>
-
-    <a class="menu-link" onclick="toggleDropdown('adminDrop')">
-      <span><i class="fa-solid fa-box-archive me-3"></i>Administration</span>
-      <i class="fa-solid fa-chevron-down small"></i>
-    </a>
-    <div class="sub-menu" id="adminDrop">
-      <a onclick="switchSection('products', this)"><i class="fa-solid fa-plus me-2"></i> Manage Menu Items</a>
-    </div>
-
-    <a class="menu-link" onclick="toggleDropdown('regDrop')">
-      <span><i class="fa-solid fa-user-plus me-3"></i>Registration</span>
-      <i class="fa-solid fa-chevron-down small"></i>
-    </a>
-    <div class="sub-menu" id="regDrop">
-      <a onclick="switchSection('customers', this)"><i class="fa-solid fa-users me-2"></i> Customer Database</a>
-    </div>
-
-    <a class="menu-link" onclick="toggleDropdown('trxDrop')">
-      <span><i class="fa-solid fa-arrow-right-arrow-left me-3"></i>Transactions</span>
-      <i class="fa-solid fa-chevron-down small"></i>
-    </a>
-    <div class="sub-menu" id="trxDrop">
-      <a onclick="switchSection('pos', this)"><i class="fa-solid fa-cart-shopping me-2"></i> POS Terminal</a>
-      <a onclick="switchSection('sales-history', this)"><i class="fa-solid fa-receipt me-2"></i> Sales Audit</a>
-    </div>
-  </div>
-
-  <!-- Main Workspace -->
-  <div class="app-main">
-
-    <!-- Stat Overview Cards -->
+    <!-- Summary Stats Bar -->
     <div class="row g-3 mb-4">
       <div class="col-md-3">
-        <div class="stat-card">
-          <div>
-            <div class="text-muted small fw-bold">Total payments</div>
-            <h3 class="fw-bold m-0 mt-1" id="statRevenue">$0.00</h3>
-          </div>
-          <div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div>
+        <div class="stat-card blue shadow-sm">
+          <small class="text-white-50 fw-bold">TOTAL REVENUE</small>
+          <h3 class="fw-bold m-0 mt-1" id="statRevenue">$0.00</h3>
         </div>
       </div>
       <div class="col-md-3">
-        <div class="stat-card">
-          <div>
-            <div class="text-muted small fw-bold">Customers</div>
-            <h3 class="fw-bold m-0 mt-1" id="statCustomers">0</h3>
-          </div>
-          <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+        <div class="stat-card green shadow-sm">
+          <small class="text-white-50 fw-bold">TOTAL PRODUCTS</small>
+          <h3 class="fw-bold m-0 mt-1" id="statProducts">0</h3>
         </div>
       </div>
       <div class="col-md-3">
-        <div class="stat-card">
-          <div>
-            <div class="text-muted small fw-bold">All MENU</div>
-            <h3 class="fw-bold m-0 mt-1" id="statProducts">0</h3>
-          </div>
-          <div class="stat-icon"><i class="fa-solid fa-utensils"></i></div>
+        <div class="stat-card cyan shadow-sm">
+          <small class="text-white-50 fw-bold">TOTAL SALES COUNT</small>
+          <h3 class="fw-bold m-0 mt-1" id="statSales">0</h3>
         </div>
       </div>
       <div class="col-md-3">
-        <div class="stat-card">
-          <div>
-            <div class="text-muted small fw-bold">ORDERS</div>
-            <h3 class="fw-bold m-0 mt-1" id="statSales">0</h3>
-          </div>
-          <div class="stat-icon"><i class="fa-solid fa-chart-pie"></i></div>
+        <div class="stat-card yellow shadow-sm">
+          <small class="text-white-50 fw-bold">LOW STOCK ITEMS</small>
+          <h3 class="fw-bold m-0 mt-1" id="statLowStock">0</h3>
         </div>
       </div>
     </div>
 
-    <!-- ================= DASHBOARD TAB ================= -->
-    <div id="section-dashboard" class="tab-pane-custom active">
-      <div class="panel-card">
-        <div class="panel-title"><i class="fa-solid fa-clock-rotate-left text-danger"></i> Last Payment Transaction</div>
-        <div class="table-responsive">
-          <table class="table-clean">
-            <thead>
-              <tr>
-                <th>TRX ID</th>
-                <th>Customer Name</th>
-                <th>Product Item</th>
-                <th>Qty</th>
-                <th>Total Price</th>
-                <th>Date & Time</th>
-              </tr>
-            </thead>
-            <tbody id="recentSalesTable"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ================= PRODUCTS TAB ================= -->
-    <div id="section-products" class="tab-pane-custom">
+    <!-- ================= TAB 1: DASHBOARD & POS ================= -->
+    <div id="dashboard-tab" class="page-tab active-tab">
       <div class="row g-4">
-        <div class="col-md-4">
-          <div class="panel-card">
-            <div class="panel-title"><i class="fa-solid fa-plus text-danger"></i> Add Menu Item</div>
-            <form id="addProductForm">
+        <!-- Quick POS Terminal -->
+        <div class="col-md-5">
+          <div class="card card-custom p-4">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-cart-shopping text-primary me-2"></i>Quick POS Terminal</h5>
+            <form id="sellProductForm">
               <div class="mb-3">
-                <label class="small text-muted fw-bold mb-1">Item Name</label>
-                <input type="text" id="pName" class="form-control" required placeholder="e.g. Burger">
+                <label class="small fw-bold mb-1">Select Customer</label>
+                <select id="sCustomer" class="form-select">
+                  <option value="Guest">Guest Customer</option>
+                </select>
               </div>
               <div class="mb-3">
-                <label class="small text-muted fw-bold mb-1">Price ($)</label>
-                <input type="number" step="0.01" id="pPrice" class="form-control" required placeholder="0.00">
+                <label class="small fw-bold mb-1">Select Product</label>
+                <select id="sProduct" class="form-select" required>
+                  <option value="">Select Product</option>
+                </select>
               </div>
-              <div class="mb-4">
-                <label class="small text-muted fw-bold mb-1">Stock Quantity</label>
-                <input type="number" id="pStock" class="form-control" required placeholder="0">
+              <div class="mb-3">
+                <label class="small fw-bold mb-1">Quantity</label>
+                <input type="number" id="sQuantity" class="form-control" placeholder="1" min="1" required>
               </div>
-              <button type="submit" class="btn btn-red w-100">Save Item</button>
+              <button type="submit" class="btn btn-primary w-100 fw-bold py-2"><i class="fa-solid fa-check me-2"></i>Complete Sale</button>
             </form>
           </div>
         </div>
+
+        <!-- Recent Sales Audit -->
+        <div class="col-md-7">
+          <div class="card card-custom p-4">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-clock-rotate-left text-secondary me-2"></i>Recent Sales</h5>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>TRX ID</th>
+                    <th>Customer</th>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody id="recentSalesTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= TAB 2: PRODUCTS & INVENTORY ================= -->
+    <div id="products-tab" class="page-tab">
+      <div class="row g-4 mb-4">
+        <!-- Add New Product Form -->
+        <div class="col-md-4">
+          <div class="card card-custom p-4">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-plus-circle text-success me-2"></i>Add New Product</h5>
+            <form id="addProductForm">
+              <div class="mb-2">
+                <label class="small fw-bold mb-1">Product Name</label>
+                <input type="text" id="pName" class="form-control" placeholder="e.g. Wireless Mouse" required>
+              </div>
+              <div class="mb-2">
+                <label class="small fw-bold mb-1">Price ($)</label>
+                <input type="number" step="0.01" id="pPrice" class="form-control" placeholder="0.00" required>
+              </div>
+              <div class="mb-3">
+                <label class="small fw-bold mb-1">Stock Quantity</label>
+                <input type="number" id="pStock" class="form-control" placeholder="0" required>
+              </div>
+              <button type="submit" class="btn btn-success w-100 fw-bold py-2">Save Product</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Inventory List with Live Search -->
         <div class="col-md-8">
-          <div class="panel-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <div class="panel-title m-0"><i class="fa-solid fa-list text-danger"></i> Menu Inventory</div>
-              <input type="text" id="searchInventory" class="form-control form-control-sm w-50" placeholder="🔍 Search menu item...">
+          <div class="card card-custom">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+              <h5 class="m-0 fw-bold">Current Inventory</h5>
+              <input type="text" id="searchInventory" class="form-control form-control-sm w-50" placeholder="🔍 Live Search Product...">
             </div>
             <div class="table-responsive">
-              <table class="table-clean">
-                <thead>
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
                   <tr>
                     <th>ID</th>
-                    <th>Item Name</th>
+                    <th>Product Name</th>
                     <th>Price</th>
                     <th>Stock Status</th>
                     <th class="text-end">Action</th>
@@ -414,69 +198,74 @@
       </div>
     </div>
 
-    <!-- ================= POS TERMINAL TAB ================= -->
-    <div id="section-pos" class="tab-pane-custom">
-      <div class="row justify-content-center">
-        <div class="col-md-6">
-          <div class="panel-card">
-            <div class="panel-title"><i class="fa-solid fa-cart-shopping text-danger"></i> POS Checkout Terminal</div>
-            <form id="sellProductForm">
-              <div class="mb-3">
-                <label class="small text-muted fw-bold mb-1">Select Customer</label>
-                <select id="sCustomer" class="form-select"></select>
-              </div>
-              <div class="mb-3">
-                <label class="small text-muted fw-bold mb-1">Select Menu Item</label>
-                <select id="sProduct" class="form-select" required></select>
-              </div>
-              <div class="mb-4">
-                <label class="small text-muted fw-bold mb-1">Quantity</label>
-                <input type="number" id="sQuantity" class="form-control" value="1" min="1" required>
-              </div>
-              <button type="submit" class="btn btn-red w-100 py-2"><i class="fa-solid fa-check me-2"></i>Complete Order</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ================= CUSTOMERS TAB ================= -->
-    <div id="section-customers" class="tab-pane-custom">
-      <div class="row g-4">
+    <!-- ================= TAB 3: CUSTOMERS & REPORTS ================= -->
+    <div id="reports-tab" class="page-tab">
+      <div class="row g-4 mb-4">
+        <!-- Add Customer -->
         <div class="col-md-4">
-          <div class="panel-card">
-            <div class="panel-title"><i class="fa-solid fa-user-plus text-danger"></i> Customer Registration</div>
+          <div class="card card-custom p-4">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-user-plus text-info me-2"></i>Add Customer</h5>
             <form id="addCustomerForm">
-              <div class="mb-3">
-                <label class="small text-muted fw-bold mb-1">Customer Name</label>
-                <input type="text" id="cName" class="form-control" required placeholder="Full Name">
+              <div class="mb-2">
+                <label class="small fw-bold mb-1">Customer Name</label>
+                <input type="text" id="cName" class="form-control" placeholder="Name" required>
               </div>
-              <div class="mb-3">
-                <label class="small text-muted fw-bold mb-1">Phone Number</label>
+              <div class="mb-2">
+                <label class="small fw-bold mb-1">Phone Number</label>
                 <input type="text" id="cPhone" class="form-control" placeholder="Phone">
               </div>
-              <div class="mb-4">
-                <label class="small text-muted fw-bold mb-1">Address</label>
+              <div class="mb-3">
+                <label class="small fw-bold mb-1">Address</label>
                 <input type="text" id="cAddress" class="form-control" placeholder="Address">
               </div>
-              <button type="submit" class="btn btn-red w-100">Register Customer</button>
+              <button type="submit" class="btn btn-info text-white w-100 fw-bold py-2">Save Customer</button>
             </form>
+
+            <hr class="my-4">
+
+            <h6 class="fw-bold mb-2">Customer List</h6>
+            <div class="table-responsive" style="max-height: 250px;">
+              <table class="table table-sm table-hover align-middle">
+                <tbody id="customersTable"></tbody>
+              </table>
+            </div>
           </div>
         </div>
+
+        <!-- Detailed Sales History & Filters -->
         <div class="col-md-8">
-          <div class="panel-card">
-            <div class="panel-title"><i class="fa-solid fa-address-book text-danger"></i> Registered Customers</div>
+          <div class="card card-custom">
+            <div class="card-header bg-white py-3">
+              <div class="row g-2 align-items-center">
+                <div class="col-md-4">
+                  <h5 class="m-0 fw-bold">Sales History Report</h5>
+                </div>
+                <div class="col-md-8">
+                  <div class="d-flex gap-2 justify-content-end">
+                    <select id="filterProduct" class="form-select form-select-sm w-auto">
+                      <option value="">All Products</option>
+                    </select>
+                    <input type="date" id="startDate" class="form-control form-control-sm w-auto">
+                    <input type="date" id="endDate" class="form-control form-control-sm w-auto">
+                    <button class="btn btn-sm btn-dark" onclick="applySalesFilter()"><i class="fa-solid fa-filter"></i></button>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="resetSalesFilter()">Reset</button>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="table-responsive">
-              <table class="table-clean">
-                <thead>
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
                   <tr>
-                    <th>ID</th>
-                    <th>Customer Name</th>
-                    <th>Phone</th>
-                    <th>Address</th>
+                    <th>TRX ID</th>
+                    <th>Customer</th>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Total Price</th>
+                    <th>Date & Time</th>
                   </tr>
                 </thead>
-                <tbody id="customersTable"></tbody>
+                <tbody id="salesTable"></tbody>
               </table>
             </div>
           </div>
@@ -484,49 +273,63 @@
       </div>
     </div>
 
-    <!-- ================= SALES AUDIT TAB ================= -->
-    <div id="section-sales-history" class="tab-pane-custom">
-      <div class="panel-card">
-        <div class="panel-title"><i class="fa-solid fa-file-invoice-dollar text-danger"></i> Complete Transaction Audit</div>
-        <div class="table-responsive">
-          <table class="table-clean">
-            <thead>
-              <tr>
-                <th>TRX ID</th>
-                <th>Customer</th>
-                <th>Menu Item</th>
-                <th>Qty</th>
-                <th>Total Price</th>
-                <th>Date & Time</th>
-              </tr>
-            </thead>
-            <tbody id="salesTable"></tbody>
-          </table>
+  </div>
+
+  <!-- Edit Product Modal -->
+  <div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Product Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editId">
+          <div class="mb-2">
+            <label class="small fw-bold mb-1">Product Name</label>
+            <input type="text" id="editName" class="form-control">
+          </div>
+          <div class="mb-2">
+            <label class="small fw-bold mb-1">Price ($)</label>
+            <input type="number" step="0.01" id="editPrice" class="form-control">
+          </div>
+          <div class="mb-2">
+            <label class="small fw-bold mb-1">Stock Quantity</label>
+            <input type="number" id="editStock" class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="saveProductEdit()">Save Changes</button>
         </div>
       </div>
     </div>
-
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     const API_BASE = window.location.origin;
+    let editModalObj;
 
     document.addEventListener('DOMContentLoaded', () => {
+      editModalObj = new bootstrap.Modal(document.getElementById('editModal'));
       loadData();
     });
 
-    function toggleDropdown(id) {
-      document.getElementById(id).classList.toggle('show');
-    }
+    // Tab Switcher
+    function switchTab(tabId, element) {
+      document.querySelectorAll('.page-tab').forEach(tab => tab.classList.remove('active-tab'));
+      document.querySelectorAll('.sidebar .nav-link').forEach(link => link.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active-tab');
+      element.classList.add('active');
 
-    function switchSection(secName, element) {
-      document.querySelectorAll('.tab-pane-custom').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.menu-link').forEach(m => m.classList.remove('active'));
-
-      const target = document.getElementById(`section-${secName}`);
-      if(target) target.classList.add('active');
-
-      if(element) element.classList.add('active');
+      const titles = {
+        'dashboard-tab': 'Dashboard Overview',
+        'products-tab': 'Products & Inventory Management',
+        'reports-tab': 'Customer Records & Sales History'
+      };
+      document.getElementById('tabTitle').innerText = titles[tabId];
     }
 
     async function loadData() {
@@ -540,86 +343,121 @@
         const cRes = await fetch(`${API_BASE}/api/customers`);
         const customers = await cRes.json();
 
+        const alertEnabled = document.getElementById('alertToggle').checked;
+        const alertThreshold = parseInt(document.getElementById('alertLimit').value) || 5;
+
+        // Dashboard Stats
         let totalRev = 0;
         if (Array.isArray(sales)) sales.forEach(s => totalRev += parseFloat(s.total_price || 0));
 
+        let lowStockCount = 0;
+        if (Array.isArray(products)) {
+          products.forEach(p => { if (p.stock <= alertThreshold) lowStockCount++; });
+        }
+
         document.getElementById('statRevenue').innerText = `$${totalRev.toFixed(2)}`;
-        document.getElementById('statCustomers').innerText = customers.length || 0;
         document.getElementById('statProducts').innerText = products.length || 0;
         document.getElementById('statSales').innerText = sales.length || 0;
+        document.getElementById('statLowStock').innerText = alertEnabled ? lowStockCount : 'Off';
 
-        // Inventory Render
+        // Render Inventory Table & Dropdowns
         const invBody = document.getElementById('inventoryTable');
         const sProduct = document.getElementById('sProduct');
+        const filterProduct = document.getElementById('filterProduct');
         invBody.innerHTML = '';
-        sProduct.innerHTML = '<option value="">Select Item</option>';
+        sProduct.innerHTML = '<option value="">Select Product</option>';
+        filterProduct.innerHTML = '<option value="">All Products</option>';
 
         if (Array.isArray(products)) {
           products.forEach(p => {
+            let stockBadge = `<span class="badge bg-success">${p.stock} Units</span>`;
+            if (alertEnabled && p.stock <= alertThreshold && p.stock > 0) {
+              stockBadge = `<span class="badge bg-warning text-dark">${p.stock} Low Stock</span>`;
+            } else if (p.stock === 0) {
+              stockBadge = `<span class="badge bg-danger">Out of Stock</span>`;
+            }
+
             invBody.innerHTML += `
               <tr>
                 <td>#${p.id}</td>
-                <td class="fw-bold text-white">${p.name}</td>
+                <td class="fw-bold">${p.name}</td>
                 <td>$${parseFloat(p.price).toFixed(2)}</td>
-                <td><span class="badge ${p.stock > 0 ? 'bg-success' : 'bg-danger'}">${p.stock} in stock</span></td>
+                <td>${stockBadge}</td>
                 <td class="text-end">
+                  <button class="btn btn-sm btn-outline-primary me-1" onclick="openEditModal(${p.id}, '${p.name}', ${p.price}, ${p.stock})"><i class="fa-solid fa-pen"></i></button>
                   <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(${p.id})"><i class="fa-solid fa-trash"></i></button>
                 </td>
               </tr>
             `;
             sProduct.innerHTML += `<option value="${p.id}">${p.name} ($${p.price})</option>`;
+            filterProduct.innerHTML += `<option value="${p.id}">${p.name}</option>`;
           });
         }
 
-        // Customer Render
+        // Render Customers
         const cBody = document.getElementById('customersTable');
         const sCustomer = document.getElementById('sCustomer');
         cBody.innerHTML = '';
         sCustomer.innerHTML = '<option value="Guest">Guest Customer</option>';
 
         if (Array.isArray(customers)) {
-          customers.forEach((c, idx) => {
+          customers.forEach(c => {
             cBody.innerHTML += `
               <tr>
-                <td>${idx + 1}</td>
-                <td class="fw-bold text-white">${c.customer_name}</td>
-                <td class="text-muted">${c.customer_phone || 'N/A'}</td>
-                <td class="text-muted">${c.customer_address || 'N/A'}</td>
+                <td class="fw-bold">${c.customer_name}</td>
+                <td class="small text-muted">${c.customer_phone || 'N/A'}</td>
               </tr>
             `;
             sCustomer.innerHTML += `<option value="${c.customer_name}">${c.customer_name}</option>`;
           });
         }
 
-        // Sales Render
-        const salesBody = document.getElementById('salesTable');
-        const recentBody = document.getElementById('recentSalesTable');
-        salesBody.innerHTML = '';
-        recentBody.innerHTML = '';
-
-        if (Array.isArray(sales)) {
-          sales.forEach((s, idx) => {
-            const row = `
-              <tr>
-                <td class="fw-bold text-danger">#${s.id}</td>
-                <td class="text-white">${s.customer_name || 'Guest'}</td>
-                <td>${s.product_name || 'Item'}</td>
-                <td>${s.quantity}</td>
-                <td class="fw-bold text-white">$${parseFloat(s.total_price).toFixed(2)}</td>
-                <td class="small text-muted">${new Date(s.sale_date).toLocaleString()}</td>
-              </tr>
-            `;
-            salesBody.innerHTML += row;
-            if(idx < 5) recentBody.innerHTML += row;
-          });
-        }
+        renderSalesTables(sales);
 
       } catch (err) {
         console.error("Error loading data:", err);
       }
     }
 
-    // Submit Actions
+    function renderSalesTables(sales) {
+      const salesBody = document.getElementById('salesTable');
+      const recentSalesBody = document.getElementById('recentSalesTable');
+      salesBody.innerHTML = '';
+      recentSalesBody.innerHTML = '';
+
+      if (Array.isArray(sales) && sales.length > 0) {
+        sales.forEach((s, index) => {
+          const rowHTML = `
+            <tr>
+              <td class="fw-bold text-primary">#TRX-${s.id}</td>
+              <td>${s.customer_name || 'Guest'}</td>
+              <td class="fw-semibold">${s.product_name || 'Product'}</td>
+              <td>${s.quantity} pcs</td>
+              <td class="fw-bold text-success">$${parseFloat(s.total_price).toFixed(2)}</td>
+              <td class="small text-muted">${new Date(s.sale_date).toLocaleString()}</td>
+            </tr>
+          `;
+          salesBody.innerHTML += rowHTML;
+
+          if (index < 5) {
+            recentSalesBody.innerHTML += `
+              <tr>
+                <td class="fw-bold text-primary">#TRX-${s.id}</td>
+                <td>${s.customer_name || 'Guest'}</td>
+                <td>${s.product_name || 'Product'}</td>
+                <td>${s.quantity}</td>
+                <td class="fw-bold text-success">$${parseFloat(s.total_price).toFixed(2)}</td>
+              </tr>
+            `;
+          }
+        });
+      } else {
+        salesBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-3">No sales record found</td></tr>`;
+        recentSalesBody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-3">No recent sales</td></tr>`;
+      }
+    }
+
+    // Form Handlers
     document.getElementById('addProductForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       await fetch(`${API_BASE}/api/products`, {
@@ -665,21 +503,66 @@
         document.getElementById('sellProductForm').reset();
         loadData();
       } else {
-        alert('Sale Failed');
+        const err = await res.json();
+        alert(err.error || 'Sale failed');
       }
     });
 
     async function deleteProduct(id) {
-      if (confirm('Delete this menu item?')) {
+      if (confirm('Are you sure you want to delete this product?')) {
         await fetch(`${API_BASE}/api/products/${id}`, { method: 'DELETE' });
         loadData();
       }
     }
 
+    function openEditModal(id, name, price, stock) {
+      document.getElementById('editId').value = id;
+      document.getElementById('editName').value = name;
+      document.getElementById('editPrice').value = price;
+      document.getElementById('editStock').value = stock;
+      editModalObj.show();
+    }
+
+    async function saveProductEdit() {
+      const id = document.getElementById('editId').value;
+      await fetch(`${API_BASE}/api/products/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: document.getElementById('editName').value,
+          price: document.getElementById('editPrice').value,
+          stock: document.getElementById('editStock').value
+        })
+      });
+      editModalObj.hide();
+      loadData();
+    }
+
+    async function applySalesFilter() {
+      const startDate = document.getElementById('startDate').value;
+      const endDate = document.getElementById('endDate').value;
+      const productId = document.getElementById('filterProduct').value;
+
+      let url = `${API_BASE}/api/sales?`;
+      if (startDate && endDate) url += `startDate=${startDate}&endDate=${endDate}&`;
+      if (productId) url += `productId=${productId}`;
+
+      const res = await fetch(url);
+      const filteredSales = await res.json();
+      renderSalesTables(filteredSales);
+    }
+
+    function resetSalesFilter() {
+      document.getElementById('startDate').value = '';
+      document.getElementById('endDate').value = '';
+      document.getElementById('filterProduct').value = '';
+      loadData();
+    }
+
     document.getElementById('searchInventory').addEventListener('keyup', function() {
-      let val = this.value.toLowerCase();
+      let value = this.value.toLowerCase();
       document.querySelectorAll("#inventoryTable tr").forEach(row => {
-        row.style.display = row.innerText.toLowerCase().includes(val) ? '' : 'none';
+        row.style.display = row.innerText.toLowerCase().includes(value) ? '' : 'none';
       });
     });
   </script>
