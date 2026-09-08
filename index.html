@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Inventory & Sales System</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; margin: 20px; }
+        h1 { text-align: center; color: #333; }
+        .container { display: flex; gap: 20px; flex-wrap: wrap; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex: 1; min-width: 300px; }
+        form { display: flex; flex-direction: column; gap: 10px; }
+        input, select, button { padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #28a745; color: white; border: none; cursor: pointer; }
+        button:hover { background: #218838; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #007bff; color: white; }
+        .sales-header { background: #28a745 !important; }
+    </style>
+</head>
+<body>
+
+    <h1>Smart Inventory Dashboard</h1>
+
+    <div class="container">
+        
+        <div class="card">
+            <h2>Add New Product</h2>
+            <form id="addProductForm">
+                <input type="text" id="name" placeholder="Product Name" required>
+                <input type="number" id="price" placeholder="Price" step="0.01" required>
+                <input type="number" id="stock" placeholder="Stock Quantity" required>
+                <button type="submit">Add Product</button>
+            </form>
+        </div>
+
+        
+        <div class="card">
+            <h2>Sell Product</h2>
+            <form id="sellProductForm">
+                <select id="productSelect" required>
+                    <option value="">Select Product</option>
+                </select>
+                <input type="number" id="sellQuantity" placeholder="Quantity" min="1" required>
+                <button type="submit" style="background: #007bff;">Complete Sale</button>
+            </form>
+        </div>
+    </div>
+
+    
+    <div class="card" style="margin-top: 20px;">
+        <h2>Current Inventory</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                </tr>
+            </thead>
+            <tbody id="inventoryTable"></tbody>
+        </table>
+    </div>
+
+    
+    <div class="card" style="margin-top: 20px;">
+        <h2>Sales History</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th class="sales-header">Sale ID</th>
+                    <th class="sales-header">Product Name</th>
+                    <th class="sales-header">Quantity Sold</th>
+                    <th class="sales-header">Total Amount</th>
+                    <th class="sales-header">Date & Time</th>
+                </tr>
+            </thead>
+            <tbody id="salesTable"></tbody>
+        </table>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+
+        
+        async function loadProducts() {
+            const res = await fetch(`${API_URL}/products`);
+            const products = await res.json();
+            
+            const tableBody = document.getElementById('inventoryTable');
+            const productSelect = document.getElementById('productSelect');
+            
+            tableBody.innerHTML = '';
+            productSelect.innerHTML = '<option value="">Select Product</option>';
+
+            products.forEach(p => {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${p.id}</td>
+                        <td>${p.name}</td>
+                        <td>৳${p.price}</td>
+                        <td>${p.stock}</td>
+                    </tr>
+                `;
+
+                productSelect.innerHTML += `<option value="${p.id}">${p.name} (Stock: ${p.stock})</option>`;
+            });
+        }
+
+        
+        async function loadSalesHistory() {
+            const res = await fetch(`${API_URL}/sales`);
+            const sales = await res.json();
+            
+            const salesTableBody = document.getElementById('salesTable');
+            salesTableBody.innerHTML = '';
+
+            sales.forEach(s => {
+                const formattedDate = new Date(s.sale_date).toLocaleString();
+                salesTableBody.innerHTML += `
+                    <tr>
+                        <td>#${s.id}</td>
+                        <td>${s.product_name}</td>
+                        <td>${s.quantity}</td>
+                        <td>৳${s.total_price}</td>
+                        <td>${formattedDate}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        
+        document.getElementById('addProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const price = document.getElementById('price').value;
+            const stock = document.getElementById('stock').value;
+
+            await fetch(`${API_URL}/products`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, price, stock })
+            });
+
+            e.target.reset();
+            loadProducts();
+        });
+
+        
+        document.getElementById('sellProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const product_id = document.getElementById('productSelect').value;
+            const quantity = document.getElementById('sellQuantity').value;
+
+            const res = await fetch(`${API_URL}/sales`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ product_id, quantity })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                alert(data.message || 'Sale completed successfully!');
+                e.target.reset();
+                loadProducts();
+                loadSalesHistory();
+            } else {
+                alert(data.error || 'Something went wrong!');
+            }
+        });
+
+        
+        loadProducts();
+        loadSalesHistory();
+    </script>
+</body>
+</html>
