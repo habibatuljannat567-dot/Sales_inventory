@@ -7,33 +7,54 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    :root { --sidebar-width: 240px; }
-    body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, sans-serif; }
-    .sidebar { width: var(--sidebar-width); height: 100vh; position: fixed; top: 0; left: 0; background: #111827; color: #fff; }
-    .sidebar .brand { font-size: 1.25rem; font-weight: 700; padding: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    .sidebar .nav-link { color: #9ca3af; padding: 0.8rem 1.2rem; font-weight: 500; }
-    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: #fff; background: rgba(255,255,255,0.08); }
+    :root { --sidebar-width: 250px; }
+    body { background-color: #f8fafc; font-family: 'Segoe UI', Tahoma, sans-serif; color: #334155; }
+    
+    /* Sidebar Layout */
+    .sidebar { width: var(--sidebar-width); height: 100vh; position: fixed; top: 0; left: 0; background: #0f172a; color: #fff; z-index: 100; }
+    .sidebar .brand { font-size: 1.2rem; font-weight: 700; padding: 1.5rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .sidebar .nav-link { color: #94a3b8; padding: 0.9rem 1.25rem; font-weight: 500; cursor: pointer; border-radius: 8px; margin: 0.2rem 0.8rem; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: #fff; background: #2563eb; }
+    
+    /* Main Content */
     .main-content { margin-left: var(--sidebar-width); padding: 2rem; }
-    .card-custom { border: none; border-radius: 10px; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); }
+    .card-custom { border: none; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); background: #ffffff; }
+    .page-tab { display: none; }
+    .page-tab.active-tab { display: block; }
+    
+    /* Stats Cards */
+    .stat-card { border-radius: 12px; padding: 1.25rem; color: #fff; }
+    .stat-card.blue { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+    .stat-card.green { background: linear-gradient(135deg, #10b981, #047857); }
+    .stat-card.cyan { background: linear-gradient(135deg, #06b6d4, #0e7490); }
+    .stat-card.yellow { background: linear-gradient(135deg, #f59e0b, #b45309); }
   </style>
 </head>
 <body>
 
+  <!-- Sidebar Navigation -->
   <div class="sidebar d-none d-md-block">
-    <div class="brand text-center"><i class="fa-solid fa-boxes-stacked me-2 text-primary"></i>Smart ERP</div>
+    <div class="brand text-center"><i class="fa-solid fa-boxes-stacked me-2 text-primary"></i>Smart ERP System</div>
     <ul class="nav flex-column mt-3">
-      <li class="nav-item"><a class="nav-link active" href="#"><i class="fa-solid fa-chart-pie me-2"></i> Dashboard</a></li>
-      <li class="nav-item"><a class="nav-link" href="#inventory-section"><i class="fa-solid fa-box me-2"></i> Products</a></li>
-      <li class="nav-item"><a class="nav-link" href="#customers-section"><i class="fa-solid fa-users me-2"></i> Customers</a></li>
-      <li class="nav-item"><a class="nav-link" href="#sales-section"><i class="fa-solid fa-file-invoice-dollar me-2"></i> Sales History</a></li>
+      <li class="nav-item">
+        <a class="nav-link active" onclick="switchTab('dashboard-tab', this)"><i class="fa-solid fa-chart-pie me-2"></i> Dashboard & POS</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('products-tab', this)"><i class="fa-solid fa-box me-2"></i> Products & Inventory</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('reports-tab', this)"><i class="fa-solid fa-users me-2"></i> Customers & Reports</a>
+      </li>
     </ul>
   </div>
 
   <div class="main-content">
+    
+    <!-- Top Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h3 class="fw-bold m-0">Inventory & POS Control Center</h3>
-        <small class="text-muted">Localhost Management System</small>
+        <h3 class="fw-bold m-0" id="tabTitle">Dashboard Overview</h3>
+        <small class="text-muted">Real-time inventory and sales management</small>
       </div>
 
       <!-- Stock Alert Controls -->
@@ -46,155 +67,212 @@
       </div>
     </div>
 
-    <!-- Stats Row -->
+    <!-- Summary Stats Bar -->
     <div class="row g-3 mb-4">
       <div class="col-md-3">
-        <div class="card card-custom bg-primary text-white p-3">
+        <div class="stat-card blue shadow-sm">
           <small class="text-white-50 fw-bold">TOTAL REVENUE</small>
-          <h3 class="fw-bold m-0" id="statRevenue">$0.00</h3>
+          <h3 class="fw-bold m-0 mt-1" id="statRevenue">$0.00</h3>
         </div>
       </div>
       <div class="col-md-3">
-        <div class="card card-custom bg-success text-white p-3">
+        <div class="stat-card green shadow-sm">
           <small class="text-white-50 fw-bold">TOTAL PRODUCTS</small>
-          <h3 class="fw-bold m-0" id="statProducts">0</h3>
+          <h3 class="fw-bold m-0 mt-1" id="statProducts">0</h3>
         </div>
       </div>
       <div class="col-md-3">
-        <div class="card card-custom bg-info text-white p-3">
+        <div class="stat-card cyan shadow-sm">
           <small class="text-white-50 fw-bold">TOTAL SALES COUNT</small>
-          <h3 class="fw-bold m-0" id="statSales">0</h3>
+          <h3 class="fw-bold m-0 mt-1" id="statSales">0</h3>
         </div>
       </div>
       <div class="col-md-3">
-        <div class="card card-custom bg-warning text-white p-3">
+        <div class="stat-card yellow shadow-sm">
           <small class="text-white-50 fw-bold">LOW STOCK ITEMS</small>
-          <h3 class="fw-bold m-0" id="statLowStock">0</h3>
+          <h3 class="fw-bold m-0 mt-1" id="statLowStock">0</h3>
         </div>
       </div>
     </div>
 
-    <!-- Action Forms -->
-    <div class="row g-4 mb-4">
-      <div class="col-md-4">
-        <div class="card card-custom p-3 h-100">
-          <h6 class="fw-bold mb-3"><i class="fa-solid fa-plus-circle text-success me-2"></i>Add Product</h6>
-          <form id="addProductForm">
-            <input type="text" id="pName" class="form-control form-control-sm mb-2" placeholder="Product Name" required>
-            <input type="number" step="0.01" id="pPrice" class="form-control form-control-sm mb-2" placeholder="Price ($)" required>
-            <input type="number" id="pStock" class="form-control form-control-sm mb-2" placeholder="Stock Quantity" required>
-            <button type="submit" class="btn btn-success btn-sm w-100 fw-bold">Save Product</button>
-          </form>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="card card-custom p-3 h-100">
-          <h6 class="fw-bold mb-3"><i class="fa-solid fa-user-plus text-info me-2"></i>Add Customer</h6>
-          <form id="addCustomerForm">
-            <input type="text" id="cName" class="form-control form-control-sm mb-2" placeholder="Customer Name" required>
-            <input type="text" id="cPhone" class="form-control form-control-sm mb-2" placeholder="Phone Number">
-            <input type="text" id="cAddress" class="form-control form-control-sm mb-2" placeholder="Address">
-            <button type="submit" class="btn btn-info btn-sm text-white w-100 fw-bold">Save Customer</button>
-          </form>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="card card-custom p-3 h-100">
-          <h6 class="fw-bold mb-3"><i class="fa-solid fa-cart-shopping text-primary me-2"></i>Quick POS Terminal</h6>
-          <form id="sellProductForm">
-            <select id="sCustomer" class="form-select form-select-sm mb-2">
-              <option value="Guest">Select Customer (Optional)</option>
-            </select>
-            <select id="sProduct" class="form-select form-select-sm mb-2" required>
-              <option value="">Select Product</option>
-            </select>
-            <input type="number" id="sQuantity" class="form-control form-control-sm mb-2" placeholder="Quantity" min="1" required>
-            <button type="submit" class="btn btn-primary btn-sm w-100 fw-bold">Checkout</button>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Inventory Table with Search -->
-    <div class="card card-custom mb-4" id="inventory-section">
-      <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-        <h6 class="m-0 fw-bold">Inventory Products</h6>
-        <input type="text" id="searchInventory" class="form-control form-control-sm w-25" placeholder="🔍 Live Search...">
-      </div>
-      <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-          <thead class="table-light">
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Price</th>
-              <th>Stock Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="inventoryTable"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Customers Table -->
-    <div class="card card-custom mb-4" id="customers-section">
-      <div class="card-header bg-white py-3">
-        <h6 class="m-0 fw-bold">Customer Records</h6>
-      </div>
-      <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-          <thead class="table-light">
-            <tr>
-              <th>ID</th>
-              <th>Customer Name</th>
-              <th>Phone</th>
-              <th>Address</th>
-            </tr>
-          </thead>
-          <tbody id="customersTable"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Sales & Date/Product Filtering -->
-    <div class="card card-custom mb-4" id="sales-section">
-      <div class="card-header bg-white py-3">
-        <div class="row g-2 align-items-center">
-          <div class="col-md-3">
-            <h6 class="m-0 fw-bold">Sales Audit History</h6>
+    <!-- ================= TAB 1: DASHBOARD & POS ================= -->
+    <div id="dashboard-tab" class="page-tab active-tab">
+      <div class="row g-4">
+        <!-- Quick POS Terminal -->
+        <div class="col-md-5">
+          <div class="card card-custom p-4">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-cart-shopping text-primary me-2"></i>Quick POS Terminal</h5>
+            <form id="sellProductForm">
+              <div class="mb-3">
+                <label class="small fw-bold mb-1">Select Customer</label>
+                <select id="sCustomer" class="form-select">
+                  <option value="Guest">Guest Customer</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="small fw-bold mb-1">Select Product</label>
+                <select id="sProduct" class="form-select" required>
+                  <option value="">Select Product</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="small fw-bold mb-1">Quantity</label>
+                <input type="number" id="sQuantity" class="form-control" placeholder="1" min="1" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-100 fw-bold py-2"><i class="fa-solid fa-check me-2"></i>Complete Sale</button>
+            </form>
           </div>
-          <div class="col-md-9">
-            <div class="d-flex gap-2 justify-content-end">
-              <select id="filterProduct" class="form-select form-select-sm w-auto">
-                <option value="">All Products</option>
-              </select>
-              <input type="date" id="startDate" class="form-control form-control-sm w-auto">
-              <input type="date" id="endDate" class="form-control form-control-sm w-auto">
-              <button class="btn btn-sm btn-dark" onclick="applySalesFilter()"><i class="fa-solid fa-filter"></i> Search</button>
-              <button class="btn btn-sm btn-outline-secondary" onclick="resetSalesFilter()">Reset</button>
+        </div>
+
+        <!-- Recent Sales Audit -->
+        <div class="col-md-7">
+          <div class="card card-custom p-4">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-clock-rotate-left text-secondary me-2"></i>Recent Sales</h5>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>TRX ID</th>
+                    <th>Customer</th>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody id="recentSalesTable"></tbody>
+              </table>
             </div>
           </div>
         </div>
       </div>
-      <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-          <thead class="table-light">
-            <tr>
-              <th>TRX ID</th>
-              <th>Customer</th>
-              <th>Product</th>
-              <th>Qty Sold</th>
-              <th>Total Amount</th>
-              <th>Date & Time</th>
-            </tr>
-          </thead>
-          <tbody id="salesTable"></tbody>
-        </table>
+    </div>
+
+    <!-- ================= TAB 2: PRODUCTS & INVENTORY ================= -->
+    <div id="products-tab" class="page-tab">
+      <div class="row g-4 mb-4">
+        <!-- Add New Product Form -->
+        <div class="col-md-4">
+          <div class="card card-custom p-4">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-plus-circle text-success me-2"></i>Add New Product</h5>
+            <form id="addProductForm">
+              <div class="mb-2">
+                <label class="small fw-bold mb-1">Product Name</label>
+                <input type="text" id="pName" class="form-control" placeholder="e.g. Wireless Mouse" required>
+              </div>
+              <div class="mb-2">
+                <label class="small fw-bold mb-1">Price ($)</label>
+                <input type="number" step="0.01" id="pPrice" class="form-control" placeholder="0.00" required>
+              </div>
+              <div class="mb-3">
+                <label class="small fw-bold mb-1">Stock Quantity</label>
+                <input type="number" id="pStock" class="form-control" placeholder="0" required>
+              </div>
+              <button type="submit" class="btn btn-success w-100 fw-bold py-2">Save Product</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Inventory List with Live Search -->
+        <div class="col-md-8">
+          <div class="card card-custom">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+              <h5 class="m-0 fw-bold">Current Inventory</h5>
+              <input type="text" id="searchInventory" class="form-control form-control-sm w-50" placeholder="🔍 Live Search Product...">
+            </div>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>ID</th>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Stock Status</th>
+                    <th class="text-end">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="inventoryTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- ================= TAB 3: CUSTOMERS & REPORTS ================= -->
+    <div id="reports-tab" class="page-tab">
+      <div class="row g-4 mb-4">
+        <!-- Add Customer -->
+        <div class="col-md-4">
+          <div class="card card-custom p-4">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-user-plus text-info me-2"></i>Add Customer</h5>
+            <form id="addCustomerForm">
+              <div class="mb-2">
+                <label class="small fw-bold mb-1">Customer Name</label>
+                <input type="text" id="cName" class="form-control" placeholder="Name" required>
+              </div>
+              <div class="mb-2">
+                <label class="small fw-bold mb-1">Phone Number</label>
+                <input type="text" id="cPhone" class="form-control" placeholder="Phone">
+              </div>
+              <div class="mb-3">
+                <label class="small fw-bold mb-1">Address</label>
+                <input type="text" id="cAddress" class="form-control" placeholder="Address">
+              </div>
+              <button type="submit" class="btn btn-info text-white w-100 fw-bold py-2">Save Customer</button>
+            </form>
+
+            <hr class="my-4">
+
+            <h6 class="fw-bold mb-2">Customer List</h6>
+            <div class="table-responsive" style="max-height: 250px;">
+              <table class="table table-sm table-hover align-middle">
+                <tbody id="customersTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed Sales History & Filters -->
+        <div class="col-md-8">
+          <div class="card card-custom">
+            <div class="card-header bg-white py-3">
+              <div class="row g-2 align-items-center">
+                <div class="col-md-4">
+                  <h5 class="m-0 fw-bold">Sales History Report</h5>
+                </div>
+                <div class="col-md-8">
+                  <div class="d-flex gap-2 justify-content-end">
+                    <select id="filterProduct" class="form-select form-select-sm w-auto">
+                      <option value="">All Products</option>
+                    </select>
+                    <input type="date" id="startDate" class="form-control form-control-sm w-auto">
+                    <input type="date" id="endDate" class="form-control form-control-sm w-auto">
+                    <button class="btn btn-sm btn-dark" onclick="applySalesFilter()"><i class="fa-solid fa-filter"></i></button>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="resetSalesFilter()">Reset</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>TRX ID</th>
+                    <th>Customer</th>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Total Price</th>
+                    <th>Date & Time</th>
+                  </tr>
+                </thead>
+                <tbody id="salesTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Edit Product Modal -->
@@ -207,12 +285,18 @@
         </div>
         <div class="modal-body">
           <input type="hidden" id="editId">
-          <label class="small fw-bold mb-1">Product Name</label>
-          <input type="text" id="editName" class="form-control mb-2">
-          <label class="small fw-bold mb-1">Price ($)</label>
-          <input type="number" step="0.01" id="editPrice" class="form-control mb-2">
-          <label class="small fw-bold mb-1">Stock Quantity</label>
-          <input type="number" id="editStock" class="form-control mb-2">
+          <div class="mb-2">
+            <label class="small fw-bold mb-1">Product Name</label>
+            <input type="text" id="editName" class="form-control">
+          </div>
+          <div class="mb-2">
+            <label class="small fw-bold mb-1">Price ($)</label>
+            <input type="number" step="0.01" id="editPrice" class="form-control">
+          </div>
+          <div class="mb-2">
+            <label class="small fw-bold mb-1">Stock Quantity</label>
+            <input type="number" id="editStock" class="form-control">
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
@@ -224,7 +308,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    const API_BASE = 'http://localhost:5000';
+    const API_BASE = window.location.origin;
     let editModalObj;
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -232,110 +316,148 @@
       loadData();
     });
 
-    async function loadData() {
-      const pRes = await fetch(`${API_BASE}/api/products`);
-      const products = await pRes.json();
+    // Tab Switcher
+    function switchTab(tabId, element) {
+      document.querySelectorAll('.page-tab').forEach(tab => tab.classList.remove('active-tab'));
+      document.querySelectorAll('.sidebar .nav-link').forEach(link => link.classList.remove('active'));
       
-      const sRes = await fetch(`${API_BASE}/api/sales`);
-      const sales = await sRes.json();
+      document.getElementById(tabId).classList.add('active-tab');
+      element.classList.add('active');
 
-      const cRes = await fetch(`${API_BASE}/api/customers`);
-      const customers = await cRes.json();
-
-      const alertEnabled = document.getElementById('alertToggle').checked;
-      const alertThreshold = parseInt(document.getElementById('alertLimit').value) || 5;
-
-      let totalRev = 0;
-      if (Array.isArray(sales)) sales.forEach(s => totalRev += parseFloat(s.total_price || 0));
-
-      let lowStockCount = 0;
-      if (Array.isArray(products)) {
-        products.forEach(p => { if (p.stock <= alertThreshold) lowStockCount++; });
-      }
-
-      document.getElementById('statRevenue').innerText = `$${totalRev.toFixed(2)}`;
-      document.getElementById('statProducts').innerText = products.length || 0;
-      document.getElementById('statSales').innerText = sales.length || 0;
-      document.getElementById('statLowStock').innerText = alertEnabled ? lowStockCount : 'Off';
-
-      // Products
-      const invBody = document.getElementById('inventoryTable');
-      const sProduct = document.getElementById('sProduct');
-      const filterProduct = document.getElementById('filterProduct');
-      invBody.innerHTML = '';
-      sProduct.innerHTML = '<option value="">Select Product</option>';
-      filterProduct.innerHTML = '<option value="">All Products</option>';
-
-      if (Array.isArray(products)) {
-        products.forEach(p => {
-          let stockBadge = `<span class="badge bg-success">${p.stock} Units</span>`;
-          if (alertEnabled && p.stock <= alertThreshold && p.stock > 0) {
-            stockBadge = `<span class="badge bg-warning text-dark">${p.stock} Low Stock</span>`;
-          } else if (p.stock === 0) {
-            stockBadge = `<span class="badge bg-danger">Out of Stock</span>`;
-          }
-
-          invBody.innerHTML += `
-            <tr>
-              <td>#${p.id}</td>
-              <td class="fw-bold">${p.name}</td>
-              <td>$${parseFloat(p.price).toFixed(2)}</td>
-              <td>${stockBadge}</td>
-              <td>
-                <button class="btn btn-sm btn-outline-primary me-1" onclick="openEditModal(${p.id}, '${p.name}', ${p.price}, ${p.stock})"><i class="fa-solid fa-pen"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(${p.id})"><i class="fa-solid fa-trash"></i></button>
-              </td>
-            </tr>
-          `;
-          sProduct.innerHTML += `<option value="${p.id}">${p.name} ($${p.price})</option>`;
-          filterProduct.innerHTML += `<option value="${p.id}">${p.name}</option>`;
-        });
-      }
-
-      // Customers
-      const cBody = document.getElementById('customersTable');
-      const sCustomer = document.getElementById('sCustomer');
-      cBody.innerHTML = '';
-      sCustomer.innerHTML = '<option value="Guest">Guest Customer</option>';
-
-      if (Array.isArray(customers)) {
-        customers.forEach(c => {
-          cBody.innerHTML += `
-            <tr>
-              <td>#CUST-${c.id}</td>
-              <td class="fw-bold">${c.customer_name}</td>
-              <td>${c.customer_phone || 'N/A'}</td>
-              <td>${c.customer_address || 'N/A'}</td>
-            </tr>
-          `;
-          sCustomer.innerHTML += `<option value="${c.customer_name}">${c.customer_name}</option>`;
-        });
-      }
-
-      renderSalesTable(sales);
+      const titles = {
+        'dashboard-tab': 'Dashboard Overview',
+        'products-tab': 'Products & Inventory Management',
+        'reports-tab': 'Customer Records & Sales History'
+      };
+      document.getElementById('tabTitle').innerText = titles[tabId];
     }
 
-    function renderSalesTable(sales) {
+    async function loadData() {
+      try {
+        const pRes = await fetch(`${API_BASE}/api/products`);
+        const products = await pRes.json();
+        
+        const sRes = await fetch(`${API_BASE}/api/sales`);
+        const sales = await sRes.json();
+
+        const cRes = await fetch(`${API_BASE}/api/customers`);
+        const customers = await cRes.json();
+
+        const alertEnabled = document.getElementById('alertToggle').checked;
+        const alertThreshold = parseInt(document.getElementById('alertLimit').value) || 5;
+
+        // Dashboard Stats
+        let totalRev = 0;
+        if (Array.isArray(sales)) sales.forEach(s => totalRev += parseFloat(s.total_price || 0));
+
+        let lowStockCount = 0;
+        if (Array.isArray(products)) {
+          products.forEach(p => { if (p.stock <= alertThreshold) lowStockCount++; });
+        }
+
+        document.getElementById('statRevenue').innerText = `$${totalRev.toFixed(2)}`;
+        document.getElementById('statProducts').innerText = products.length || 0;
+        document.getElementById('statSales').innerText = sales.length || 0;
+        document.getElementById('statLowStock').innerText = alertEnabled ? lowStockCount : 'Off';
+
+        // Render Inventory Table & Dropdowns
+        const invBody = document.getElementById('inventoryTable');
+        const sProduct = document.getElementById('sProduct');
+        const filterProduct = document.getElementById('filterProduct');
+        invBody.innerHTML = '';
+        sProduct.innerHTML = '<option value="">Select Product</option>';
+        filterProduct.innerHTML = '<option value="">All Products</option>';
+
+        if (Array.isArray(products)) {
+          products.forEach(p => {
+            let stockBadge = `<span class="badge bg-success">${p.stock} Units</span>`;
+            if (alertEnabled && p.stock <= alertThreshold && p.stock > 0) {
+              stockBadge = `<span class="badge bg-warning text-dark">${p.stock} Low Stock</span>`;
+            } else if (p.stock === 0) {
+              stockBadge = `<span class="badge bg-danger">Out of Stock</span>`;
+            }
+
+            invBody.innerHTML += `
+              <tr>
+                <td>#${p.id}</td>
+                <td class="fw-bold">${p.name}</td>
+                <td>$${parseFloat(p.price).toFixed(2)}</td>
+                <td>${stockBadge}</td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-outline-primary me-1" onclick="openEditModal(${p.id}, '${p.name}', ${p.price}, ${p.stock})"><i class="fa-solid fa-pen"></i></button>
+                  <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(${p.id})"><i class="fa-solid fa-trash"></i></button>
+                </td>
+              </tr>
+            `;
+            sProduct.innerHTML += `<option value="${p.id}">${p.name} ($${p.price})</option>`;
+            filterProduct.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+          });
+        }
+
+        // Render Customers
+        const cBody = document.getElementById('customersTable');
+        const sCustomer = document.getElementById('sCustomer');
+        cBody.innerHTML = '';
+        sCustomer.innerHTML = '<option value="Guest">Guest Customer</option>';
+
+        if (Array.isArray(customers)) {
+          customers.forEach(c => {
+            cBody.innerHTML += `
+              <tr>
+                <td class="fw-bold">${c.customer_name}</td>
+                <td class="small text-muted">${c.customer_phone || 'N/A'}</td>
+              </tr>
+            `;
+            sCustomer.innerHTML += `<option value="${c.customer_name}">${c.customer_name}</option>`;
+          });
+        }
+
+        renderSalesTables(sales);
+
+      } catch (err) {
+        console.error("Error loading data:", err);
+      }
+    }
+
+    function renderSalesTables(sales) {
       const salesBody = document.getElementById('salesTable');
+      const recentSalesBody = document.getElementById('recentSalesTable');
       salesBody.innerHTML = '';
+      recentSalesBody.innerHTML = '';
+
       if (Array.isArray(sales) && sales.length > 0) {
-        sales.forEach(s => {
-          salesBody.innerHTML += `
+        sales.forEach((s, index) => {
+          const rowHTML = `
             <tr>
               <td class="fw-bold text-primary">#TRX-${s.id}</td>
               <td>${s.customer_name || 'Guest'}</td>
-              <td class="fw-semibold">${s.product_name || 'Deleted Product'}</td>
+              <td class="fw-semibold">${s.product_name || 'Product'}</td>
               <td>${s.quantity} pcs</td>
               <td class="fw-bold text-success">$${parseFloat(s.total_price).toFixed(2)}</td>
               <td class="small text-muted">${new Date(s.sale_date).toLocaleString()}</td>
             </tr>
           `;
+          salesBody.innerHTML += rowHTML;
+
+          if (index < 5) {
+            recentSalesBody.innerHTML += `
+              <tr>
+                <td class="fw-bold text-primary">#TRX-${s.id}</td>
+                <td>${s.customer_name || 'Guest'}</td>
+                <td>${s.product_name || 'Product'}</td>
+                <td>${s.quantity}</td>
+                <td class="fw-bold text-success">$${parseFloat(s.total_price).toFixed(2)}</td>
+              </tr>
+            `;
+          }
         });
       } else {
         salesBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-3">No sales record found</td></tr>`;
+        recentSalesBody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-3">No recent sales</td></tr>`;
       }
     }
 
+    // Form Handlers
     document.getElementById('addProductForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       await fetch(`${API_BASE}/api/products`, {
@@ -427,7 +549,7 @@
 
       const res = await fetch(url);
       const filteredSales = await res.json();
-      renderSalesTable(filteredSales);
+      renderSalesTables(filteredSales);
     }
 
     function resetSalesFilter() {
@@ -446,3 +568,4 @@
   </script>
 </body>
 </html>
+   
