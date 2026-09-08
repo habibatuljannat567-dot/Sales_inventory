@@ -7,11 +7,12 @@ app.use(cors());
 app.use(express.json());
 
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'smart_inventory'
-});
+    host: 'bzoye4hctdlfvksvj1vj-mysql.services.clever-cloud.com',
+    user: 'umn1xyvjsgdtypzv',
+    password: 'k4uM8uCsD9t6D6g9pqOc',
+    database: 'bzoye4hctdlfvksvj1vj',
+    port: 3306
+});;
 
 db.connect((err) => {
     if (err) console.log('Database Connection Error:', err);
