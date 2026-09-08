@@ -3,36 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shop ERP & Management System</title>
+  <title>Smart ERP & Shop Management System</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    :root { --sidebar-width: 260px; }
-    body { background-color: #f8fafc; font-family: 'Segoe UI', Tahoma, sans-serif; color: #334155; }
+    :root { --sidebar-width: 250px; --header-height: 60px; }
+    body { background-color: #f1f5f9; font-family: 'Segoe UI', Roboto, sans-serif; color: #334155; }
     
-    /* Sidebar Layout */
+    /* 1. Top Header */
+    .top-header { height: var(--header-height); background: #ffffff; border-bottom: 1px solid #e2e8f0; position: fixed; top: 0; right: 0; left: var(--sidebar-width); z-index: 99; padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+    
+    /* 2. Left Sidebar */
     .sidebar { width: var(--sidebar-width); height: 100vh; position: fixed; top: 0; left: 0; background: #0f172a; color: #fff; z-index: 100; }
-    .sidebar .brand { font-size: 1.25rem; font-weight: 700; padding: 1.5rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    .sidebar .nav-link { color: #94a3b8; padding: 0.85rem 1.25rem; font-weight: 500; cursor: pointer; border-radius: 8px; margin: 0.2rem 0.8rem; }
+    .sidebar .brand { font-size: 1.2rem; font-weight: 700; padding: 1.25rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .sidebar .nav-link { color: #94a3b8; padding: 0.8rem 1.25rem; font-weight: 500; cursor: pointer; border-radius: 8px; margin: 0.2rem 0.8rem; transition: all 0.2s; }
     .sidebar .nav-link:hover, .sidebar .nav-link.active { color: #fff; background: #2563eb; }
     
-    /* Main Content Layout */
-    .main-content { margin-left: var(--sidebar-width); padding: 2rem; }
-    .card-custom { border: none; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); background: #ffffff; }
+    /* Main Layout */
+    .main-wrapper { margin-left: var(--sidebar-width); margin-top: var(--header-height); padding: 1.5rem; min-height: calc(100vh - var(--header-height) - 60px); }
+    .card-custom { border: none; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); background: #ffffff; }
+    
+    /* Dynamic Tab Control */
     .page-tab { display: none; }
     .page-tab.active-tab { display: block; }
     
-    /* Summary Stats Cards */
-    .stat-card { border-radius: 12px; padding: 1.5rem; color: #fff; }
+    /* 3. Hero Section */
+    .hero-banner { background: linear-gradient(135deg, #1e293b, #334155); color: #fff; border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem; }
+
+    /* Stats Cards */
+    .stat-card { border-radius: 10px; padding: 1.25rem; color: #fff; }
     .stat-card.blue { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
     .stat-card.green { background: linear-gradient(135deg, #10b981, #047857); }
     .stat-card.cyan { background: linear-gradient(135deg, #06b6d4, #0e7490); }
     .stat-card.yellow { background: linear-gradient(135deg, #f59e0b, #b45309); }
+
+    /* 4. Footer */
+    .footer { margin-left: var(--sidebar-width); background: #ffffff; border-top: 1px solid #e2e8f0; padding: 1rem 1.5rem; font-size: 0.875rem; color: #64748b; text-align: center; }
   </style>
 </head>
 <body>
 
-  <!-- ================= SIDEBAR NAVIGATION ================= -->
+  <!-- ================= LEFT SIDEBAR ================= -->
   <div class="sidebar d-none d-md-block">
     <div class="brand text-center">
       <i class="fa-solid fa-store me-2 text-primary"></i>Shop ERP System
@@ -66,27 +77,52 @@
     </ul>
   </div>
 
-  <!-- ================= MAIN CONTENT ================= -->
-  <div class="main-content">
+  <!-- ================= 1. TOP HEADER ================= -->
+  <header class="top-header">
+    <div class="d-flex align-items-center gap-3">
+      <h5 class="m-0 fw-bold text-dark" id="headerTitle">Dashboard Overview</h5>
+    </div>
     
-    <!-- Top Header Bar -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h3 class="fw-bold m-0" id="tabTitle">Dashboard Overview</h3>
-        <small class="text-muted" id="tabSubtitle">Store analytics and performance summary</small>
-      </div>
-
-      <!-- Low Stock Alert Control -->
-      <div class="card p-2 d-flex flex-row align-items-center gap-2 border-0 shadow-sm">
+    <div class="d-flex align-items-center gap-3">
+      <!-- Alert Limit Switcher -->
+      <div class="d-flex align-items-center gap-2 bg-light px-2 py-1 rounded border">
         <div class="form-check form-switch m-0">
           <input class="form-check-input" type="checkbox" id="alertToggle" checked onchange="loadData()">
-          <label class="form-check-label small fw-bold" for="alertToggle">Stock Alert Limit</label>
+          <label class="form-check-label small fw-bold" for="alertToggle">Low Stock Alert Limit</label>
         </div>
-        <input type="number" id="alertLimit" class="form-control form-control-sm" value="5" style="width: 65px;" onchange="loadData()">
+        <input type="number" id="alertLimit" class="form-control form-control-sm" value="5" style="width: 55px;" onchange="loadData()">
+      </div>
+
+      <div class="dropdown">
+        <button class="btn btn-light btn-sm dropdown-toggle fw-semibold" type="button" data-bs-toggle="dropdown">
+          <i class="fa-solid fa-circle-user text-primary me-1"></i> Manager
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+          <li><a class="dropdown-item small" href="#"><i class="fa-solid fa-gear me-2"></i>Settings</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTENT WRAPPER ================= -->
+  <div class="main-wrapper">
+
+    <!-- ================= 2. HERO BANNER ================= -->
+    <div class="hero-banner shadow-sm">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h3 class="fw-bold m-0 mb-2">Welcome Back, Shop Manager! 👋</h3>
+          <p class="m-0 text-white-50">Manage inventory stock, sales history, and registered customers from the sidebar.</p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+          <button class="btn btn-primary fw-bold" onclick="switchTab('products-tab', document.querySelectorAll('.sidebar .nav-link')[2])">
+            <i class="fa-solid fa-plus me-1"></i> Add New Product
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- Global Stats Overview Header -->
+    <!-- STATS OVERVIEW CARDS -->
     <div class="row g-3 mb-4">
       <div class="col-md-3">
         <div class="stat-card blue shadow-sm">
@@ -102,7 +138,7 @@
       </div>
       <div class="col-md-3">
         <div class="stat-card cyan shadow-sm">
-          <small class="text-white-50 fw-bold">TOTAL CUSTOMERS</small>
+          <small class="text-white-50 fw-bold">REGISTERED CUSTOMERS</small>
           <h3 class="fw-bold m-0 mt-1" id="statCustomers">0</h3>
         </div>
       </div>
@@ -114,24 +150,26 @@
       </div>
     </div>
 
-    <!-- ================= 1. DASHBOARD PAGE ================= -->
+    <!-- ================= 3. BODY CONTENT (TABS) ================= -->
+
+    <!-- PAGE 1: DASHBOARD -->
     <div id="dashboard-tab" class="page-tab active-tab">
       <div class="row g-4">
         <div class="col-md-8">
           <div class="card card-custom p-4">
-            <h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-pie text-primary me-2"></i>Quick Business Summary</h5>
-            <p class="text-muted">Welcome to your shop management dashboard. Use the sidebar menu to navigate between products, customers, and transaction histories.</p>
-            <div class="row g-3 mt-2">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-line text-primary me-2"></i>Quick Overview</h5>
+            <p class="text-muted">Select an option from the left sidebar to manage products, customers, or transactions.</p>
+            <div class="row g-3 mt-1">
               <div class="col-md-6">
                 <div class="border rounded p-3 bg-light">
-                  <h6 class="fw-bold text-secondary">Active Stock Status</h6>
-                  <p class="m-0 text-muted">Monitor product items currently available in inventory.</p>
+                  <h6 class="fw-bold text-secondary"><i class="fa-solid fa-boxes-stacked me-2"></i>Products Stock</h6>
+                  <p class="m-0 text-muted small">View, add or edit inventory items.</p>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="border rounded p-3 bg-light">
-                  <h6 class="fw-bold text-secondary">Customer Engagement</h6>
-                  <p class="m-0 text-muted">Track registered customer profiles and sales counts.</p>
+                  <h6 class="fw-bold text-secondary"><i class="fa-solid fa-users me-2"></i>Customer Contacts</h6>
+                  <p class="m-0 text-muted small">Check customer phone numbers and locations.</p>
                 </div>
               </div>
             </div>
@@ -140,54 +178,46 @@
 
         <div class="col-md-4">
           <div class="card card-custom p-4">
-            <h5 class="fw-bold mb-3"><i class="fa-solid fa-bell text-warning me-2"></i>System Notices</h5>
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-info-circle text-info me-2"></i>System Info</h5>
             <ul class="list-group list-group-flush">
-              <li class="list-group-item px-0 text-muted small">✓ System connected to live API database</li>
-              <li class="list-group-item px-0 text-muted small">✓ Stock alert limits are operational</li>
-              <li class="list-group-item px-0 text-muted small">✓ Customer location records enabled</li>
+              <li class="list-group-item px-0 text-muted small"><i class="fa-solid fa-check text-success me-2"></i>API Status: Connected</li>
+              <li class="list-group-item px-0 text-muted small"><i class="fa-solid fa-check text-success me-2"></i>Database: Sync Active</li>
             </ul>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ================= 2. ADMINISTRATION PAGE ================= -->
+    <!-- PAGE 2: ADMINISTRATION -->
     <div id="admin-tab" class="page-tab">
       <div class="card card-custom p-4">
-        <h5 class="fw-bold mb-3"><i class="fa-solid fa-sliders text-primary me-2"></i>Administration & System Settings</h5>
+        <h5 class="fw-bold mb-3"><i class="fa-solid fa-sliders text-primary me-2"></i>Administration</h5>
         <div class="row g-3">
           <div class="col-md-6">
             <div class="border rounded p-3">
-              <h6 class="fw-bold">General Settings</h6>
-              <p class="small text-muted mb-3">Configure shop currency, taxes, and system alerts.</p>
+              <h6 class="fw-bold">General Config</h6>
+              <p class="small text-muted mb-3">System configurations and settings.</p>
               <div class="mb-3">
                 <label class="small fw-bold mb-1">Currency Symbol</label>
                 <input type="text" class="form-control form-control-sm" value="$" readonly>
               </div>
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="border rounded p-3">
-              <h6 class="fw-bold">User Management</h6>
-              <p class="small text-muted mb-3">System administrator profile settings.</p>
-              <button class="btn btn-sm btn-outline-primary" disabled>Manage Admin Roles</button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
 
-    <!-- ================= 3. PRODUCTS PAGE ================= -->
+    <!-- PAGE 3: PRODUCTS (TABLE & FORM) -->
     <div id="products-tab" class="page-tab">
       <div class="row g-4">
-        <!-- Add Product Form -->
+        <!-- Add Form -->
         <div class="col-md-4">
           <div class="card card-custom p-4">
             <h5 class="fw-bold mb-3"><i class="fa-solid fa-plus-circle text-success me-2"></i>Add New Product</h5>
             <form id="addProductForm">
               <div class="mb-2">
                 <label class="small fw-bold mb-1">Product Name *</label>
-                <input type="text" id="pName" class="form-control" placeholder="e.g. Mechanical Keyboard" required>
+                <input type="text" id="pName" class="form-control" placeholder="Item Name" required>
               </div>
               <div class="mb-2">
                 <label class="small fw-bold mb-1">Price ($) *</label>
@@ -202,11 +232,11 @@
           </div>
         </div>
 
-        <!-- Inventory List -->
+        <!-- Products List Table -->
         <div class="col-md-8">
           <div class="card card-custom">
             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-              <h5 class="m-0 fw-bold">Inventory Product Stock</h5>
+              <h5 class="m-0 fw-bold">Inventory Products List</h5>
               <input type="text" id="searchInventory" class="form-control form-control-sm w-50" placeholder="🔍 Search Product...">
             </div>
             <div class="table-responsive">
@@ -216,7 +246,7 @@
                     <th>ID</th>
                     <th>Product Name</th>
                     <th>Price</th>
-                    <th>Stock Status</th>
+                    <th>Stock</th>
                     <th class="text-end">Action</th>
                   </tr>
                 </thead>
@@ -228,17 +258,17 @@
       </div>
     </div>
 
-    <!-- ================= 4. CUSTOMER DETAILS PAGE ================= -->
+    <!-- PAGE 4: CUSTOMERS (TABLE & FORM) -->
     <div id="customers-tab" class="page-tab">
       <div class="row g-4">
         <!-- Add Customer Form -->
         <div class="col-md-4">
           <div class="card card-custom p-4">
-            <h5 class="fw-bold mb-3"><i class="fa-solid fa-user-plus text-info me-2"></i>Add New Customer</h5>
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-user-plus text-info me-2"></i>Add Customer Profile</h5>
             <form id="addCustomerForm">
               <div class="mb-2">
                 <label class="small fw-bold mb-1">Customer Name *</label>
-                <input type="text" id="cName" class="form-control" placeholder="Full Name" required>
+                <input type="text" id="cName" class="form-control" placeholder="Name" required>
               </div>
               <div class="mb-2">
                 <label class="small fw-bold mb-1">Phone Number *</label>
@@ -249,19 +279,19 @@
                 <input type="text" id="cCity" class="form-control" placeholder="e.g. Dhaka" required>
               </div>
               <div class="mb-3">
-                <label class="small fw-bold mb-1">Street / Detail Address (Optional)</label>
-                <input type="text" id="cAddress" class="form-control" placeholder="Street / House No.">
+                <label class="small fw-bold mb-1">Address Detail (Optional)</label>
+                <input type="text" id="cAddress" class="form-control" placeholder="Street / House">
               </div>
-              <button type="submit" class="btn btn-info text-white w-100 fw-bold py-2">Save Customer Profile</button>
+              <button type="submit" class="btn btn-info text-white w-100 fw-bold py-2">Save Profile</button>
             </form>
           </div>
         </div>
 
-        <!-- Customer List -->
+        <!-- Customer List Table -->
         <div class="col-md-8">
           <div class="card card-custom">
             <div class="card-header bg-white py-3">
-              <h5 class="m-0 fw-bold">Registered Customer Directory</h5>
+              <h5 class="m-0 fw-bold">Registered Customer List</h5>
             </div>
             <div class="table-responsive">
               <table class="table table-hover align-middle mb-0">
@@ -270,7 +300,7 @@
                     <th>ID</th>
                     <th>Customer Name</th>
                     <th>Phone</th>
-                    <th>Location / Address</th>
+                    <th>Location</th>
                   </tr>
                 </thead>
                 <tbody id="customersTable"></tbody>
@@ -281,13 +311,13 @@
       </div>
     </div>
 
-    <!-- ================= 5. TRANSACTIONS PAGE ================= -->
+    <!-- PAGE 5: TRANSACTIONS (TABLE) -->
     <div id="transactions-tab" class="page-tab">
       <div class="card card-custom">
         <div class="card-header bg-white py-3">
           <div class="row g-2 align-items-center">
             <div class="col-md-4">
-              <h5 class="m-0 fw-bold">Transaction History Report</h5>
+              <h5 class="m-0 fw-bold">Transaction History</h5>
             </div>
             <div class="col-md-8">
               <div class="d-flex gap-2 justify-content-end">
@@ -296,7 +326,7 @@
                 </select>
                 <input type="date" id="startDate" class="form-control form-control-sm w-auto">
                 <input type="date" id="endDate" class="form-control form-control-sm w-auto">
-                <button class="btn btn-sm btn-dark" onclick="applySalesFilter()"><i class="fa-solid fa-filter"></i> Filter</button>
+                <button class="btn btn-sm btn-dark" onclick="applySalesFilter()"><i class="fa-solid fa-filter"></i></button>
                 <button class="btn btn-sm btn-outline-secondary" onclick="resetSalesFilter()">Reset</button>
               </div>
             </div>
@@ -311,7 +341,7 @@
                 <th>Product</th>
                 <th>Qty</th>
                 <th>Total Price</th>
-                <th>Date & Time</th>
+                <th>Date</th>
               </tr>
             </thead>
             <tbody id="salesTable"></tbody>
@@ -322,12 +352,19 @@
 
   </div>
 
-  <!-- Edit Product Modal -->
+  <!-- ================= 4. FOOTER ================= -->
+  <footer class="footer">
+    <div class="container-fluid">
+      <p class="m-0">&copy; 2026 Shop ERP System | All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Edit Modal -->
   <div class="modal fade" id="editModal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Edit Product Details</h5>
+          <h5 class="modal-title">Edit Product</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
@@ -365,24 +402,23 @@
 
     // Tab Switcher Function
     function switchTab(tabId, element) {
+      // Hide all tabs
       document.querySelectorAll('.page-tab').forEach(tab => tab.classList.remove('active-tab'));
+      // Remove active status from all links
       document.querySelectorAll('.sidebar .nav-link').forEach(link => link.classList.remove('active'));
       
+      // Show targeted tab
       document.getElementById(tabId).classList.add('active-tab');
       element.classList.add('active');
 
-      const titles = {
-        'dashboard-tab': { title: 'Dashboard Overview', subtitle: 'Store analytics and performance summary' },
-        'admin-tab': { title: 'Administration', subtitle: 'Manage system settings and configurations' },
-        'products-tab': { title: 'Products Management', subtitle: 'Add, update and track stock items' },
-        'customers-tab': { title: 'Customer Details', subtitle: 'View and manage customer contact info' },
-        'transactions-tab': { title: 'Transactions Report', subtitle: 'Detailed logs of sales transactions' }
+      const headers = {
+        'dashboard-tab': 'Dashboard Overview',
+        'admin-tab': 'Administration Settings',
+        'products-tab': 'Products Management',
+        'customers-tab': 'Customer Directory',
+        'transactions-tab': 'Transaction Logs'
       };
-
-      if(titles[tabId]) {
-        document.getElementById('tabTitle').innerText = titles[tabId].title;
-        document.getElementById('tabSubtitle').innerText = titles[tabId].subtitle;
-      }
+      document.getElementById('headerTitle').innerText = headers[tabId] || 'Dashboard';
     }
 
     async function loadData() {
@@ -399,7 +435,7 @@
         const alertEnabled = document.getElementById('alertToggle').checked;
         const alertThreshold = parseInt(document.getElementById('alertLimit').value) || 5;
 
-        // Stat Calculations
+        // Statistics
         let totalRev = 0;
         if (Array.isArray(sales)) sales.forEach(s => totalRev += parseFloat(s.total_price || 0));
 
@@ -409,17 +445,17 @@
         }
 
         document.getElementById('statRevenue').innerText = `$${totalRev.toFixed(2)}`;
-        document.getElementById('statProducts').innerText = products ? products.length : 0;
-        document.getElementById('statCustomers').innerText = customers ? customers.length : 0;
+        document.getElementById('statProducts').innerText = Array.isArray(products) ? products.length : 0;
+        document.getElementById('statCustomers').innerText = Array.isArray(customers) ? customers.length : 0;
         document.getElementById('statLowStock').innerText = alertEnabled ? lowStockCount : 'Off';
 
-        // Render Products Table & Filter Dropdown
+        // 1. Render Products Table
         const invBody = document.getElementById('inventoryTable');
         const filterProduct = document.getElementById('filterProduct');
         invBody.innerHTML = '';
         filterProduct.innerHTML = '<option value="">All Products</option>';
 
-        if (Array.isArray(products)) {
+        if (Array.isArray(products) && products.length > 0) {
           products.forEach(p => {
             let stockBadge = `<span class="badge bg-success">${p.stock} Units</span>`;
             if (alertEnabled && p.stock <= alertThreshold && p.stock > 0) {
@@ -442,9 +478,11 @@
             `;
             filterProduct.innerHTML += `<option value="${p.id}">${p.name}</option>`;
           });
+        } else {
+          invBody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-3">No products available. Add one using the form!</td></tr>`;
         }
 
-        // Render Customers Table
+        // 2. Render Customers Table
         const cBody = document.getElementById('customersTable');
         cBody.innerHTML = '';
 
@@ -460,13 +498,14 @@
             `;
           });
         } else {
-          cBody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-3">No customers found</td></tr>`;
+          cBody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-3">No customers registered yet.</td></tr>`;
         }
 
+        // 3. Render Sales Table
         renderSalesTables(sales);
 
       } catch (err) {
-        console.error("Error loading data:", err);
+        console.error("Error fetching data:", err);
       }
     }
 
@@ -488,11 +527,11 @@
           `;
         });
       } else {
-        salesBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-3">No transaction history found</td></tr>`;
+        salesBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-3">No transactions history found.</td></tr>`;
       }
     }
 
-    // Forms Processing
+    // Handlers
     document.getElementById('addProductForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       await fetch(`${API_BASE}/api/products`, {
@@ -512,7 +551,7 @@
       e.preventDefault();
       const city = document.getElementById('cCity').value.trim();
       const street = document.getElementById('cAddress').value.trim();
-      const fullAddr = street ? `${city}, ${street}` : city;
+      const fullAddress = street ? `${city}, ${street}` : city;
 
       await fetch(`${API_BASE}/api/customers`, {
         method: 'POST',
@@ -520,7 +559,7 @@
         body: JSON.stringify({
           customer_name: document.getElementById('cName').value,
           customer_phone: document.getElementById('cPhone').value,
-          customer_address: fullAddr
+          customer_address: fullAddress
         })
       });
       document.getElementById('addCustomerForm').reset();
