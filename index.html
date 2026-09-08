@@ -3,639 +3,166 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart ERP & Shop Management System</title>
+  <title>Simple Live ERP System</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    :root { --sidebar-width: 250px; --header-height: 60px; }
-    body { background-color: #f1f5f9; font-family: 'Segoe UI', Roboto, sans-serif; color: #334155; }
-    
-    .top-header { height: var(--header-height); background: #ffffff; border-bottom: 1px solid #e2e8f0; position: fixed; top: 0; right: 0; left: var(--sidebar-width); z-index: 99; padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; }
-    .sidebar { width: var(--sidebar-width); height: 100vh; position: fixed; top: 0; left: 0; background: #0f172a; color: #fff; z-index: 100; }
-    .sidebar .brand { font-size: 1.2rem; font-weight: 700; padding: 1.25rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    .sidebar .nav-link { color: #94a3b8; padding: 0.8rem 1.25rem; font-weight: 500; cursor: pointer; border-radius: 8px; margin: 0.2rem 0.8rem; transition: all 0.2s; }
-    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: #fff; background: #2563eb; }
-    
-    .main-wrapper { margin-left: var(--sidebar-width); margin-top: var(--header-height); padding: 1.5rem; min-height: calc(100vh - var(--header-height) - 60px); }
-    .card-custom { border: none; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); background: #ffffff; }
-    
-    .page-tab { display: none; }
-    .page-tab.active-tab { display: block; }
-    
-    .hero-banner { background: linear-gradient(135deg, #1e293b, #334155); color: #fff; border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem; }
-
-    .stat-card { border-radius: 10px; padding: 1.25rem; color: #fff; }
-    .stat-card.blue { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
-    .stat-card.green { background: linear-gradient(135deg, #10b981, #047857); }
-    .stat-card.cyan { background: linear-gradient(135deg, #06b6d4, #0e7490); }
-    .stat-card.yellow { background: linear-gradient(135deg, #f59e0b, #b45309); }
-
-    .footer { margin-left: var(--sidebar-width); background: #ffffff; border-top: 1px solid #e2e8f0; padding: 1rem 1.5rem; font-size: 0.875rem; color: #64748b; text-align: center; }
-    
-    /* Live Status Pulse Badge */
-    .live-indicator { width: 10px; height: 10px; background-color: #10b981; border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+    body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
+    .card { border-radius: 10px; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .nav-pills .nav-link.active { background-color: #0d6efd; }
+    .live-status { width: 8px; height: 8px; background: #198754; border-radius: 50%; display: inline-block; }
   </style>
 </head>
 <body>
 
-  <!-- ================= LEFT SIDEBAR ================= -->
-  <div class="sidebar d-none d-md-block">
-    <div class="brand text-center">
-      <i class="fa-solid fa-store me-2 text-primary"></i>Shop ERP System
-    </div>
-    <ul class="nav flex-column mt-3">
-      <li class="nav-item">
-        <a class="nav-link active" onclick="switchTab('dashboard-tab', this)">
-          <i class="fa-solid fa-chart-line me-2"></i> Dashboard
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" onclick="switchTab('admin-tab', this)">
-          <i class="fa-solid fa-user-shield me-2"></i> Administration
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" onclick="switchTab('products-tab', this)">
-          <i class="fa-solid fa-boxes-stacked me-2"></i> Products
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" onclick="switchTab('customers-tab', this)">
-          <i class="fa-solid fa-address-book me-2"></i> Customer Details
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" onclick="switchTab('transactions-tab', this)">
-          <i class="fa-solid fa-receipt me-2"></i> Transactions
-        </a>
-      </li>
-    </ul>
-  </div>
-
-  <!-- ================= TOP HEADER ================= -->
-  <header class="top-header">
-    <div class="d-flex align-items-center gap-3">
-      <h5 class="m-0 fw-bold text-dark" id="headerTitle">Dashboard Overview</h5>
-      <span class="badge bg-light text-dark border d-flex align-items-center gap-2 px-2 py-1">
-        <span class="live-indicator"></span> Live Sync
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-dark bg-dark mb-4">
+    <div class="container">
+      <span class="navbar-brand fw-bold">
+        <i class="fa-solid fa-store me-2"></i> Shop Management
+      </span>
+      <span class="badge bg-light text-dark d-flex align-items-center gap-2">
+        <span class="live-status"></span> Live Sync Active
       </span>
     </div>
-    
-    <div class="d-flex align-items-center gap-3">
-      <div class="d-flex align-items-center gap-2 bg-light px-2 py-1 rounded border">
-        <div class="form-check form-switch m-0">
-          <input class="form-check-input" type="checkbox" id="alertToggle" checked onchange="loadData()">
-          <label class="form-check-label small fw-bold" for="alertToggle">Low Stock Alert Limit</label>
-        </div>
-        <input type="number" id="alertLimit" class="form-control form-control-sm" value="5" style="width: 55px;" onchange="loadData()">
-      </div>
+  </nav>
 
-      <div class="dropdown">
-        <button class="btn btn-light btn-sm dropdown-toggle fw-semibold" type="button" data-bs-toggle="dropdown">
-          <i class="fa-solid fa-circle-user text-primary me-1"></i> Manager
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-          <li><a class="dropdown-item small" href="#"><i class="fa-solid fa-gear me-2"></i>Settings</a></li>
-        </ul>
-      </div>
-    </div>
-  </header>
-
-  <!-- ================= MAIN WRAPPER ================= -->
-  <div class="main-wrapper">
-
-    <!-- HERO BANNER -->
-    <div class="hero-banner shadow-sm">
-      <div class="row align-items-center">
-        <div class="col-md-8">
-          <h3 class="fw-bold m-0 mb-2">Welcome Back, Shop Manager! 👋</h3>
-          <p class="m-0 text-white-50">Manage inventory stock, sales history, and registered customers from the sidebar.</p>
-        </div>
-        <div class="col-md-4 text-md-end mt-3 mt-md-0">
-          <button class="btn btn-primary fw-bold" onclick="switchTab('products-tab', document.querySelectorAll('.sidebar .nav-link')[2])">
-            <i class="fa-solid fa-plus me-1"></i> Add New Product
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- STATS OVERVIEW CARDS -->
-    <div class="row g-3 mb-4">
-      <div class="col-md-3">
-        <div class="stat-card blue shadow-sm">
-          <small class="text-white-50 fw-bold">TOTAL REVENUE</small>
-          <h3 class="fw-bold m-0 mt-1" id="statRevenue">$0.00</h3>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="stat-card green shadow-sm">
-          <small class="text-white-50 fw-bold">TOTAL PRODUCTS</small>
-          <h3 class="fw-bold m-0 mt-1" id="statProducts">0</h3>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="stat-card cyan shadow-sm">
-          <small class="text-white-50 fw-bold">REGISTERED CUSTOMERS</small>
-          <h3 class="fw-bold m-0 mt-1" id="statCustomers">0</h3>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="stat-card yellow shadow-sm">
-          <small class="text-white-50 fw-bold">LOW STOCK ITEMS</small>
-          <h3 class="fw-bold m-0 mt-1" id="statLowStock">0</h3>
-        </div>
-      </div>
-    </div>
-
-    <!-- ================= BODY CONTENT (TABS) ================= -->
-
-    <!-- PAGE 1: DASHBOARD -->
-    <div id="dashboard-tab" class="page-tab active-tab">
-      <div class="row g-4">
-        <div class="col-md-8">
-          <div class="card card-custom p-4">
-            <h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-line text-primary me-2"></i>Quick Overview</h5>
-            <p class="text-muted">Select an option from the left sidebar to manage products, customers, or transactions.</p>
-            <div class="row g-3 mt-1">
-              <div class="col-md-6">
-                <div class="border rounded p-3 bg-light">
-                  <h6 class="fw-bold text-secondary"><i class="fa-solid fa-boxes-stacked me-2"></i>Products Stock</h6>
-                  <p class="m-0 text-muted small">View, add or edit inventory items.</p>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="border rounded p-3 bg-light">
-                  <h6 class="fw-bold text-secondary"><i class="fa-solid fa-users me-2"></i>Customer Contacts</h6>
-                  <p class="m-0 text-muted small">Check customer phone numbers and locations.</p>
-                </div>
-              </div>
+  <div class="container">
+    <div class="row g-4">
+      
+      <!-- FORM: INPUT DATA -->
+      <div class="col-md-4">
+        <div class="card p-4">
+          <h5 class="fw-bold mb-3"><i class="fa-solid fa-plus-circle text-primary me-2"></i>Add New Product</h5>
+          <form id="productForm">
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Product Name</label>
+              <input type="text" id="pName" class="form-control" placeholder="e.g. Laptop" required>
             </div>
-          </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Price ($)</label>
+              <input type="number" step="0.01" id="pPrice" class="form-control" placeholder="0.00" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Stock Quantity</label>
+              <input type="number" id="pStock" class="form-control" placeholder="0" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 fw-bold py-2">Save Product</button>
+          </form>
         </div>
+      </div>
 
-        <div class="col-md-4">
-          <div class="card card-custom p-4">
-            <h5 class="fw-bold mb-3"><i class="fa-solid fa-info-circle text-info me-2"></i>System Info</h5>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item px-0 text-muted small"><i class="fa-solid fa-check text-success me-2"></i>API Status: Connected</li>
-              <li class="list-group-item px-0 text-muted small"><i class="fa-solid fa-sync fa-spin text-primary me-2"></i>Live Auto Sync: 3s Interval</li>
-            </ul>
+      <!-- TABLE: SHOW & LIVE UPDATE DATA -->
+      <div class="col-md-8">
+        <div class="card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold m-0"><i class="fa-solid fa-boxes-stacked text-success me-2"></i>Product List</h5>
+            <button class="btn btn-sm btn-outline-danger" onclick="clearAllData()">
+              <i class="fa-solid fa-trash me-1"></i> Clear All Data
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>Product Name</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody id="productTable">
+                <!-- Data will appear here automatically -->
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- PAGE 2: ADMINISTRATION -->
-    <div id="admin-tab" class="page-tab">
-      <div class="card card-custom p-4">
-        <h5 class="fw-bold mb-3"><i class="fa-solid fa-sliders text-primary me-2"></i>Administration</h5>
-        <div class="row g-3">
-          <div class="col-md-6">
-            <div class="border rounded p-3">
-              <h6 class="fw-bold">General Config</h6>
-              <p class="small text-muted mb-3">System configurations and settings.</p>
-              <div class="mb-3">
-                <label class="small fw-bold mb-1">Currency Symbol</label>
-                <input type="text" class="form-control form-control-sm" value="$" readonly>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PAGE 3: PRODUCTS (TABLE & FORM) -->
-    <div id="products-tab" class="page-tab">
-      <div class="row g-4">
-        <div class="col-md-4">
-          <div class="card card-custom p-4">
-            <h5 class="fw-bold mb-3"><i class="fa-solid fa-plus-circle text-success me-2"></i>Add New Product</h5>
-            <form id="addProductForm">
-              <div class="mb-2">
-                <label class="small fw-bold mb-1">Product Name *</label>
-                <input type="text" id="pName" class="form-control" placeholder="Item Name" required>
-              </div>
-              <div class="mb-2">
-                <label class="small fw-bold mb-1">Price ($) *</label>
-                <input type="number" step="0.01" id="pPrice" class="form-control" placeholder="0.00" required>
-              </div>
-              <div class="mb-3">
-                <label class="small fw-bold mb-1">Initial Stock Quantity *</label>
-                <input type="number" id="pStock" class="form-control" placeholder="0" required>
-              </div>
-              <button type="submit" class="btn btn-success w-100 fw-bold py-2">Save Product</button>
-            </form>
-          </div>
-        </div>
-
-        <div class="col-md-8">
-          <div class="card card-custom">
-            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-              <h5 class="m-0 fw-bold">Inventory Products List</h5>
-              <input type="text" id="searchInventory" class="form-control form-control-sm w-50" placeholder="🔍 Search Product...">
-            </div>
-            <div class="table-responsive">
-              <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                  <tr>
-                    <th>ID</th>
-                    <th>Product Name</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th class="text-end">Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="inventoryTable"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PAGE 4: CUSTOMERS (TABLE & FORM) -->
-    <div id="customers-tab" class="page-tab">
-      <div class="row g-4">
-        <div class="col-md-4">
-          <div class="card card-custom p-4">
-            <h5 class="fw-bold mb-3"><i class="fa-solid fa-user-plus text-info me-2"></i>Add Customer Profile</h5>
-            <form id="addCustomerForm">
-              <div class="mb-2">
-                <label class="small fw-bold mb-1">Customer Name *</label>
-                <input type="text" id="cName" class="form-control" placeholder="Name" required>
-              </div>
-              <div class="mb-2">
-                <label class="small fw-bold mb-1">Phone Number *</label>
-                <input type="text" id="cPhone" class="form-control" placeholder="017xxxxxxxx" required>
-              </div>
-              <div class="mb-2">
-                <label class="small fw-bold mb-1">City *</label>
-                <input type="text" id="cCity" class="form-control" placeholder="e.g. Dhaka" required>
-              </div>
-              <div class="mb-3">
-                <label class="small fw-bold mb-1">Address Detail (Optional)</label>
-                <input type="text" id="cAddress" class="form-control" placeholder="Street / House">
-              </div>
-              <button type="submit" class="btn btn-info text-white w-100 fw-bold py-2">Save Profile</button>
-            </form>
-          </div>
-        </div>
-
-        <div class="col-md-8">
-          <div class="card card-custom">
-            <div class="card-header bg-white py-3">
-              <h5 class="m-0 fw-bold">Registered Customer List</h5>
-            </div>
-            <div class="table-responsive">
-              <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                  <tr>
-                    <th>ID</th>
-                    <th>Customer Name</th>
-                    <th>Phone</th>
-                    <th>Location</th>
-                  </tr>
-                </thead>
-                <tbody id="customersTable"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PAGE 5: TRANSACTIONS (TABLE) -->
-    <div id="transactions-tab" class="page-tab">
-      <div class="card card-custom">
-        <div class="card-header bg-white py-3">
-          <div class="row g-2 align-items-center">
-            <div class="col-md-4">
-              <h5 class="m-0 fw-bold">Transaction History</h5>
-            </div>
-            <div class="col-md-8">
-              <div class="d-flex gap-2 justify-content-end">
-                <select id="filterProduct" class="form-select form-select-sm w-auto">
-                  <option value="">All Products</option>
-                </select>
-                <input type="date" id="startDate" class="form-control form-control-sm w-auto">
-                <input type="date" id="endDate" class="form-control form-control-sm w-auto">
-                <button class="btn btn-sm btn-dark" onclick="applySalesFilter()"><i class="fa-solid fa-filter"></i></button>
-                <button class="btn btn-sm btn-outline-secondary" onclick="resetSalesFilter()">Reset</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-              <tr>
-                <th>TRX ID</th>
-                <th>Customer Name</th>
-                <th>Product</th>
-                <th>Qty</th>
-                <th>Total Price</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody id="salesTable"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="container-fluid">
-      <p class="m-0">&copy; 2026 Shop ERP System | All Rights Reserved.</p>
-    </div>
-  </footer>
-
-  <!-- Edit Product Modal -->
-  <div class="modal fade" id="editModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Edit Product</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" id="editId">
-          <div class="mb-2">
-            <label class="small fw-bold mb-1">Product Name</label>
-            <input type="text" id="editName" class="form-control">
-          </div>
-          <div class="mb-2">
-            <label class="small fw-bold mb-1">Price ($)</label>
-            <input type="number" step="0.01" id="editPrice" class="form-control">
-          </div>
-          <div class="mb-2">
-            <label class="small fw-bold mb-1">Stock Quantity</label>
-            <input type="number" id="editStock" class="form-control">
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary btn-sm" onclick="saveProductEdit()">Save Changes</button>
-        </div>
-      </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    const API_BASE = window.location.origin;
-    let editModalObj;
-    let isFilterActive = false; // Prevents auto-refresh during manual filtering
+    // 1. Get products from LocalStorage
+    function getProducts() {
+      return JSON.parse(localStorage.getItem('products_data')) || [];
+    }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      editModalObj = new bootstrap.Modal(document.getElementById('editModal'));
+    // 2. Save products to LocalStorage
+    function saveProducts(products) {
+      localStorage.setItem('products_data', JSON.stringify(products));
+      renderTable(); // Instant local refresh
+    }
+
+    // 3. Render Data to HTML Table
+    function renderTable() {
+      const products = getProducts();
+      const tbody = document.getElementById('productTable');
+      tbody.innerHTML = '';
+
+      if (products.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-3">No data available. Add a product from the left form!</td></tr>`;
+        return;
+      }
+
+      products.forEach((p, index) => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${index + 1}</td>
+            <td class="fw-bold">${p.name}</td>
+            <td>$${parseFloat(p.price).toFixed(2)}</td>
+            <td><span class="badge bg-success">${p.stock} Units</span></td>
+            <td class="text-end">
+              <button class="btn btn-sm btn-danger" onclick="deleteProduct(${index})">
+                <i class="fa-solid fa-trash"></i> Delete
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    // 4. Form Submit Handler (Add Product)
+    document.getElementById('productForm').addEventListener('submit', (e) => {
+      e.preventDefault();
       
-      // Initial Load
-      loadData();
-
-      // LIVE UPDATE SOLVED: Auto fetch new data every 3 seconds
-      setInterval(() => {
-        if (!isFilterActive) {
-          loadData();
-        }
-      }, 3000);
-    });
-
-    function switchTab(tabId, element) {
-      document.querySelectorAll('.page-tab').forEach(tab => tab.classList.remove('active-tab'));
-      document.querySelectorAll('.sidebar .nav-link').forEach(link => link.classList.remove('active'));
-      
-      document.getElementById(tabId).classList.add('active-tab');
-      element.classList.add('active');
-
-      const headers = {
-        'dashboard-tab': 'Dashboard Overview',
-        'admin-tab': 'Administration Settings',
-        'products-tab': 'Products Management',
-        'customers-tab': 'Customer Directory',
-        'transactions-tab': 'Transaction Logs'
+      const newProduct = {
+        name: document.getElementById('pName').value,
+        price: document.getElementById('pPrice').value,
+        stock: document.getElementById('pStock').value
       };
-      document.getElementById('headerTitle').innerText = headers[tabId] || 'Dashboard';
+
+      const products = getProducts();
+      products.push(newProduct);
+      saveProducts(products);
+
+      document.getElementById('productForm').reset();
+    });
+
+    // 5. Delete Item
+    function deleteProduct(index) {
+      const products = getProducts();
+      products.splice(index, 1);
+      saveProducts(products);
     }
 
-    async function loadData() {
-      try {
-        const pRes = await fetch(`${API_BASE}/api/products`);
-        const products = await pRes.json();
-        
-        const sRes = await fetch(`${API_BASE}/api/sales`);
-        const sales = await sRes.json();
-
-        const cRes = await fetch(`${API_BASE}/api/customers`);
-        const customers = await cRes.json();
-
-        const alertEnabled = document.getElementById('alertToggle').checked;
-        const alertThreshold = parseInt(document.getElementById('alertLimit').value) || 5;
-
-        // Stats calculation
-        let totalRev = 0;
-        if (Array.isArray(sales)) sales.forEach(s => totalRev += parseFloat(s.total_price || 0));
-
-        let lowStockCount = 0;
-        if (Array.isArray(products)) {
-          products.forEach(p => { if (p.stock <= alertThreshold) lowStockCount++; });
-        }
-
-        document.getElementById('statRevenue').innerText = `$${totalRev.toFixed(2)}`;
-        document.getElementById('statProducts').innerText = Array.isArray(products) ? products.length : 0;
-        document.getElementById('statCustomers').innerText = Array.isArray(customers) ? customers.length : 0;
-        document.getElementById('statLowStock').innerText = alertEnabled ? lowStockCount : 'Off';
-
-        // 1. Render Products Table
-        const invBody = document.getElementById('inventoryTable');
-        const filterProduct = document.getElementById('filterProduct');
-        invBody.innerHTML = '';
-        
-        // Save selected filter option
-        const currentFilterVal = filterProduct.value;
-        filterProduct.innerHTML = '<option value="">All Products</option>';
-
-        if (Array.isArray(products) && products.length > 0) {
-          products.forEach(p => {
-            let stockBadge = `<span class="badge bg-success">${p.stock} Units</span>`;
-            if (alertEnabled && p.stock <= alertThreshold && p.stock > 0) {
-              stockBadge = `<span class="badge bg-warning text-dark">${p.stock} Low Stock</span>`;
-            } else if (p.stock === 0) {
-              stockBadge = `<span class="badge bg-danger">Out of Stock</span>`;
-            }
-
-            invBody.innerHTML += `
-              <tr>
-                <td>#${p.id}</td>
-                <td class="fw-bold">${p.name}</td>
-                <td>$${parseFloat(p.price).toFixed(2)}</td>
-                <td>${stockBadge}</td>
-                <td class="text-end">
-                  <button class="btn btn-sm btn-outline-primary me-1" onclick="openEditModal(${p.id}, '${p.name}', ${p.price}, ${p.stock})">
-                    <i class="fa-solid fa-pen"></i> Edit
-                  </button>
-                  <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(${p.id})">
-                    <i class="fa-solid fa-trash"></i>
-                  </button>
-                </td>
-              </tr>
-            `;
-            filterProduct.innerHTML += `<option value="${p.id}">${p.name}</option>`;
-          });
-          filterProduct.value = currentFilterVal;
-        } else {
-          invBody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-3">No products available. Add one using the form!</td></tr>`;
-        }
-
-        // 2. Render Customers Table
-        const cBody = document.getElementById('customersTable');
-        cBody.innerHTML = '';
-
-        if (Array.isArray(customers) && customers.length > 0) {
-          customers.forEach(c => {
-            cBody.innerHTML += `
-              <tr>
-                <td>#${c.id || '-'}</td>
-                <td class="fw-bold">${c.customer_name}</td>
-                <td>${c.customer_phone || 'N/A'}</td>
-                <td>${c.customer_address || 'N/A'}</td>
-              </tr>
-            `;
-          });
-        } else {
-          cBody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-3">No customers registered yet.</td></tr>`;
-        }
-
-        // 3. Render Transactions Table
-        if (!isFilterActive) {
-          renderSalesTables(sales);
-        }
-
-      } catch (err) {
-        console.error("Error fetching live data:", err);
+    // 6. Clear All Data
+    function clearAllData() {
+      if (confirm('Are you sure you want to delete all saved data?')) {
+        localStorage.removeItem('products_data');
+        renderTable();
       }
     }
 
-    function renderSalesTables(sales) {
-      const salesBody = document.getElementById('salesTable');
-      salesBody.innerHTML = '';
-
-      if (Array.isArray(sales) && sales.length > 0) {
-        sales.forEach(s => {
-          salesBody.innerHTML += `
-            <tr>
-              <td class="fw-bold text-primary">#TRX-${s.id}</td>
-              <td>${s.customer_name || 'Walk-in Guest'}</td>
-              <td class="fw-semibold">${s.product_name || 'Product'}</td>
-              <td>${s.quantity} pcs</td>
-              <td class="fw-bold text-success">$${parseFloat(s.total_price).toFixed(2)}</td>
-              <td class="small text-muted">${new Date(s.sale_date).toLocaleString()}</td>
-            </tr>
-          `;
-        });
-      } else {
-        salesBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-3">No transactions history found.</td></tr>`;
-      }
-    }
-
-    // Handlers
-    document.getElementById('addProductForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      await fetch(`${API_BASE}/api/products`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: document.getElementById('pName').value,
-          price: document.getElementById('pPrice').value,
-          stock: document.getElementById('pStock').value
-        })
-      });
-      document.getElementById('addProductForm').reset();
-      loadData();
+    // 7. REAL LIVE UPDATE LISTENER (Auto-updates when data changes across tabs)
+    window.addEventListener('storage', () => {
+      renderTable();
     });
 
-    document.getElementById('addCustomerForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const city = document.getElementById('cCity').value.trim();
-      const street = document.getElementById('cAddress').value.trim();
-      const fullAddress = street ? `${city}, ${street}` : city;
-
-      await fetch(`${API_BASE}/api/customers`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          customer_name: document.getElementById('cName').value,
-          customer_phone: document.getElementById('cPhone').value,
-          customer_address: fullAddress
-        })
-      });
-      document.getElementById('addCustomerForm').reset();
-      loadData();
-    });
-
-    async function deleteProduct(id) {
-      if (confirm('Are you sure you want to delete this product?')) {
-        await fetch(`${API_BASE}/api/products/${id}`, { method: 'DELETE' });
-        loadData();
-      }
-    }
-
-    function openEditModal(id, name, price, stock) {
-      document.getElementById('editId').value = id;
-      document.getElementById('editName').value = name;
-      document.getElementById('editPrice').value = price;
-      document.getElementById('editStock').value = stock;
-      editModalObj.show();
-    }
-
-    async function saveProductEdit() {
-      const id = document.getElementById('editId').value;
-      await fetch(`${API_BASE}/api/products/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: document.getElementById('editName').value,
-          price: document.getElementById('editPrice').value,
-          stock: document.getElementById('editStock').value
-        })
-      });
-      editModalObj.hide();
-      loadData();
-    }
-
-    async function applySalesFilter() {
-      const startDate = document.getElementById('startDate').value;
-      const endDate = document.getElementById('endDate').value;
-      const productId = document.getElementById('filterProduct').value;
-
-      isFilterActive = true;
-
-      let url = `${API_BASE}/api/sales?`;
-      if (startDate && endDate) url += `startDate=${startDate}&endDate=${endDate}&`;
-      if (productId) url += `productId=${productId}`;
-
-      const res = await fetch(url);
-      const filteredSales = await res.json();
-      renderSalesTables(filteredSales);
-    }
-
-    function resetSalesFilter() {
-      isFilterActive = false;
-      document.getElementById('startDate').value = '';
-      document.getElementById('endDate').value = '';
-      document.getElementById('filterProduct').value = '';
-      loadData();
-    }
-
-    document.getElementById('searchInventory').addEventListener('keyup', function() {
-      let value = this.value.toLowerCase();
-      document.querySelectorAll("#inventoryTable tr").forEach(row => {
-        row.style.display = row.innerText.toLowerCase().includes(value) ? '' : 'none';
-      });
-    });
+    // Initial Load when opening page
+    renderTable();
   </script>
 </body>
 </html>
